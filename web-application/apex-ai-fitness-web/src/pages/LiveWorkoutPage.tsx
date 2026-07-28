@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useFitnessStore } from '../store/useFitnessStore';
 import { soundService } from '../services/soundService';
-import { PlayCircle, Eye, Volume2, Plus, ArrowRight, Droplets, Home } from 'lucide-react';
+import { Plus, ArrowRight, Droplets } from 'lucide-react';
+import { ExerciseMotionVisualizer } from '../components/ExerciseMotionVisualizer';
 
 export const LiveWorkoutPage: React.FC = () => {
   const {
@@ -53,7 +54,20 @@ export const LiveWorkoutPage: React.FC = () => {
     return `${String(min).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const EX_INFO: Record<string, { name: string; primary: string; secondary: string; image: string; tempo: string; breath: string; equip: string }> = {
+  const EX_INFO: Record<
+    string,
+    {
+      name: string;
+      primary: string;
+      secondary: string;
+      image: string;
+      tempo: string;
+      breath: string;
+      equip: string;
+      motionType: 'squat' | 'pushup' | 'row' | 'pike' | 'split_squat' | 'default';
+      reps: number;
+    }
+  > = {
     'bodyweight-jump-squat': {
       name: 'Explosive Bodyweight Jump Squat',
       primary: 'Quadriceps',
@@ -61,7 +75,9 @@ export const LiveWorkoutPage: React.FC = () => {
       image: 'images/exercise_bodyweight_squat.jpg',
       tempo: '2-0-X-0 (Explosive Jump)',
       breath: 'Inhale Down / Exhale Jump',
-      equip: '100% Without Gym Equipment (Home Floor)'
+      equip: '100% Without Gym Equipment (Home Floor)',
+      motionType: 'squat',
+      reps: 15
     },
     'strict-push-up': {
       name: 'Strict Anatomical Floor Push-Up',
@@ -70,7 +86,9 @@ export const LiveWorkoutPage: React.FC = () => {
       image: 'images/exercise_floor_pushup.jpg',
       tempo: '2-1-1-0 (1s Floor Pause)',
       breath: 'Inhale Down / Exhale Up',
-      equip: '100% Without Gym Equipment (Home Floor)'
+      equip: '100% Without Gym Equipment (Home Floor)',
+      motionType: 'pushup',
+      reps: 15
     },
     'bulgarian-split-squat-home': {
       name: 'Chair Bulgarian Split Squat',
@@ -79,7 +97,9 @@ export const LiveWorkoutPage: React.FC = () => {
       image: 'images/exercise_chair_split_squat.jpg',
       tempo: '3-1-1-0 (3s Negative)',
       breath: 'Inhale Down / Exhale Up',
-      equip: '100% Without Gym Equipment (Home Chair)'
+      equip: '100% Without Gym Equipment (Home Chair)',
+      motionType: 'split_squat',
+      reps: 12
     },
     'barbell-back-squat': {
       name: 'Barbell Back Squat',
@@ -88,7 +108,9 @@ export const LiveWorkoutPage: React.FC = () => {
       image: 'images/exercise_barbell_squat.jpg',
       tempo: '3-1-1-0 (3s Descent)',
       breath: 'Inhale Down / Exhale Up',
-      equip: 'Barbell Rack (Gym Equipment)'
+      equip: 'Barbell Rack (Gym Equipment)',
+      motionType: 'squat',
+      reps: 10
     },
     'barbell-bench-press': {
       name: 'Flat Barbell Bench Press',
@@ -97,7 +119,9 @@ export const LiveWorkoutPage: React.FC = () => {
       image: 'images/exercise_bench_press.jpg',
       tempo: '2-1-1-0 (2s Lowering)',
       breath: 'Inhale Down / Exhale Up',
-      equip: 'Barbell Bench (Gym Equipment)'
+      equip: 'Barbell Bench (Gym Equipment)',
+      motionType: 'pushup',
+      reps: 10
     },
     'conventional-deadlift': {
       name: 'Conventional Barbell Deadlift',
@@ -106,7 +130,9 @@ export const LiveWorkoutPage: React.FC = () => {
       image: 'images/exercise_deadlift.jpg',
       tempo: '2-0-1-1 (Dead Stop)',
       breath: 'Brace Bottom / Exhale Top',
-      equip: 'Barbell & Plates (Gym Equipment)'
+      equip: 'Barbell & Plates (Gym Equipment)',
+      motionType: 'default',
+      reps: 8
     }
   };
 
@@ -207,31 +233,17 @@ export const LiveWorkoutPage: React.FC = () => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 7 cols */}
+        {/* Left 7 cols: Moving Human Anatomical Motion & Rep Counter Engine */}
         <div className="lg:col-span-7 glass-card p-6 flex flex-col justify-between space-y-4">
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black/40 border border-white/15 flex items-center justify-center group">
-            <img
-              src={info.image}
-              alt={info.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute top-4 left-4 px-3.5 py-1.5 rounded-xl bg-black/75 backdrop-blur-md border border-cyan-500/40 text-xs font-extrabold text-cyan-300 flex items-center space-x-2">
-              <Eye className="w-4 h-4 text-cyan-400" />
-              <span>3D Muscle Overlay: {info.primary}</span>
-            </div>
-            <button
-              onClick={() =>
-                soundService.playVoiceCue(
-                  '/audio/workout_start.mp3',
-                  "Welcome to your Apex AI workout session. Let's focus on proper form, tempo, and progressive overload. Let's begin!"
-                )
-              }
-              className="absolute bottom-4 right-4 px-4 py-2.5 rounded-xl bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-extrabold shadow-lg flex items-center space-x-2 backdrop-blur-md transition"
-            >
-              <Volume2 className="w-4 h-4" />
-              <span>Hear Voice Coach Cue</span>
-            </button>
-          </div>
+          
+          <ExerciseMotionVisualizer
+            image={info.image}
+            name={info.name}
+            primaryMuscle={info.primary}
+            targetReps={info.reps}
+            tempo={info.tempo}
+            motionType={info.motionType}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
