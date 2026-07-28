@@ -236,14 +236,14 @@ export const WorkoutEnginePage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            AI Workout Engine & Adaptive Planner
+            AI Workout Engine
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Generates personalized protocols adapted to your recovery score, injuries, available
-            equipment, and progressive overload history.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Adaptive workout protocols tailored to your recovery, injuries, and available equipment.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -252,9 +252,8 @@ export const WorkoutEnginePage: React.FC = () => {
             className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white text-xs font-extrabold shadow-lg flex items-center space-x-1.5 transition"
           >
             <Home className="w-4 h-4" />
-            <span>Switch to 100% Zero-Gym Mode</span>
+            <span>100% Zero-Gym Mode</span>
           </button>
-          <span className="text-xs text-gray-400 font-semibold">Select Protocol:</span>
           <select
             value={selectedWorkoutType}
             onChange={(e) => setSelectedWorkoutType(e.target.value)}
@@ -264,10 +263,10 @@ export const WorkoutEnginePage: React.FC = () => {
               Push Pull Legs (Hypertrophy Focus)
             </option>
             <option value="HOME_WORKOUT" className="bg-gray-900">
-              🏠 Home Workout (100% Without Gym Equipment)
+              🏠 Home Workout (100% Zero Gym Equipment)
             </option>
             <option value="CALISTHENICS" className="bg-gray-900">
-              🏠 Calisthenics Mastery (100% Without Gym Equipment)
+              🏠 Calisthenics Mastery (100% Zero Gym Equipment)
             </option>
             <option value="UPPER_LOWER" className="bg-gray-900">
               Upper Lower Split (4-Day)
@@ -304,7 +303,7 @@ export const WorkoutEnginePage: React.FC = () => {
             </option>
           </select>
           <button
-            onClick={() => alert('Plan Generated and progressive overload targets updated!')}
+            onClick={() => alert('Protocol Generated! Your progressive overload targets are active.')}
             className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-extrabold shadow-lg shadow-blue-500/30 transition"
           >
             Generate Plan
@@ -312,7 +311,7 @@ export const WorkoutEnginePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Banner */}
+      {/* Concise Telemetry Banner */}
       <div className="glass-card p-6 bg-gradient-to-r from-blue-900/30 to-emerald-900/20 border-blue-500/40 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-glow-blue">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center">
@@ -320,12 +319,12 @@ export const WorkoutEnginePage: React.FC = () => {
           </div>
           <div>
             <h4 className="font-extrabold text-base">
-              Active Plan: {selectedWorkoutType.replace(/_/g, ' ')} — Adaptive Protocol
+              Active Plan: {selectedWorkoutType.replace(/_/g, ' ')}
             </h4>
-            <p className="text-xs text-gray-300 mt-1 max-w-xl">
+            <p className="text-xs text-gray-300 mt-1">
               {selectedWorkoutType === 'HOME_WORKOUT' || selectedWorkoutType === 'CALISTHENICS'
-                ? '🏠 100% Without Gym Equipment Mode: Utilizing pure bodyweight calisthenics, floor mastery, and household chair/doorframe tension.'
-                : 'Progressive Overload Active: Recommending +2.5kg increase on compound movements based on 92% recovery score.'}
+                ? '🏠 100% Zero Gym Equipment Mode: Bodyweight calisthenics & floor mastery.'
+                : 'Progressive Overload Active: Recommending +2.5kg increase based on 92% recovery score.'}
             </p>
           </div>
         </div>
@@ -349,11 +348,11 @@ export const WorkoutEnginePage: React.FC = () => {
       </div>
 
       {/* Exercises list */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {list.map((ex, index) => (
           <div
             key={ex.slug}
-            className="glass-card p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
+            className="glass-card p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 font-extrabold flex items-center justify-center">
@@ -362,7 +361,7 @@ export const WorkoutEnginePage: React.FC = () => {
               <div>
                 <h4 className="font-extrabold text-base">{ex.name}</h4>
                 <p className="text-xs text-gray-400 font-medium">
-                  Target: {ex.primaryMuscle} • Equipment: <span className={ex.equipment.includes('Without Gym') ? 'text-emerald-400 font-bold' : 'text-cyan-400 font-bold'}>{ex.equipment}</span>
+                  Target: <span className="text-blue-400 font-bold">{ex.primaryMuscle}</span> • Equipment: <span className={ex.equipment.includes('Without Gym') ? 'text-emerald-400 font-bold' : 'text-cyan-400 font-bold'}>{ex.equipment}</span>
                 </p>
               </div>
             </div>
@@ -381,7 +380,7 @@ export const WorkoutEnginePage: React.FC = () => {
               </div>
               <button
                 onClick={() => openExerciseModal(ex)}
-                className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition"
+                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition"
               >
                 Guide
               </button>

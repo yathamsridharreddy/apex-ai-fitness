@@ -63,14 +63,14 @@ export const FoodScannerPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Concise Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            AI Food Photo Scanner (Macro & Health Score Detection)
+            AI Food Photo Scanner
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Upload or snap a meal photo. Our AI vision detects food items, calculates macros, outputs
-            health score (0-100), and recommends healthier swaps.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Instant macro and health score detection with healthier swap advice.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

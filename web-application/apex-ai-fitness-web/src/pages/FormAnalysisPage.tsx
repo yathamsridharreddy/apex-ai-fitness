@@ -72,14 +72,14 @@ export const FormAnalysisPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Concise Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            AI Camera Form Analyzer (Real-Time Biomechanics)
+            AI Camera Form Analyzer
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Detects posture, spinal neutral alignment, squat depth, and elbow tuck using phone/webcam
-            camera or simulated live telemetry.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Real-time posture and depth feedback with spoken audio corrections.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -88,25 +88,25 @@ export const FormAnalysisPage: React.FC = () => {
             className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/30 flex items-center space-x-2 transition"
           >
             <Camera className="w-4 h-4" />
-            <span>{isCameraActive ? 'Stop Live Camera' : 'Start Live Camera'}</span>
+            <span>{isCameraActive ? 'Stop Camera' : 'Start Camera'}</span>
           </button>
           <button
             onClick={() => simulateCorrection('DEPTH')}
             className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white border border-white/15 transition"
           >
-            Test "Increase Depth" Alert
+            Test Depth
           </button>
           <button
             onClick={() => simulateCorrection('SPINE')}
             className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white border border-white/15 transition"
           >
-            Test "Straighten Back" Alert
+            Test Spine
           </button>
           <button
             onClick={() => simulateCorrection('ELBOW')}
             className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white border border-white/15 transition"
           >
-            Test "Elbow Tuck" Alert
+            Test Elbows
           </button>
         </div>
       </div>
@@ -132,14 +132,13 @@ export const FormAnalysisPage: React.FC = () => {
               <div>
                 <h3 className="text-xl font-extrabold text-white">AI Vision Skeleton Active</h3>
                 <p className="text-xs text-gray-300 max-w-md mx-auto mt-1 leading-relaxed">
-                  Click "Start Live Camera" to enable webcam pose detection, or click the test buttons
-                  above to hear real-time AI Voice corrections and view joint angle overlays!
+                  Click "Start Camera" to enable webcam pose detection, or test instant voice corrections above.
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-gray-300 pt-3">
                 <span className="flex items-center space-x-2">
                   <span className="w-3 h-3 rounded-full bg-cyan-400 inline-block"></span>
-                  <span>Hip & Knee Angle</span>
+                  <span>Knee Angle</span>
                 </span>
                 <span className="flex items-center space-x-2">
                   <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span>
@@ -147,7 +146,7 @@ export const FormAnalysisPage: React.FC = () => {
                 </span>
                 <span className="flex items-center space-x-2">
                   <span className="w-3 h-3 rounded-full bg-orange-400 inline-block"></span>
-                  <span>Bar Velocity</span>
+                  <span>Velocity</span>
                 </span>
               </div>
             </div>
@@ -174,7 +173,7 @@ export const FormAnalysisPage: React.FC = () => {
 
         {/* Right 4 cols */}
         <div className="lg:col-span-4 glass-card p-6 space-y-4">
-          <h3 className="font-extrabold text-base">Live Biomechanical Telemetry</h3>
+          <h3 className="font-extrabold text-base">Live Biometric Telemetry</h3>
 
           <div className="space-y-3.5">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -209,19 +208,19 @@ export const FormAnalysisPage: React.FC = () => {
           </div>
 
           <div className="pt-3 border-t border-white/10 space-y-2">
-            <div className="text-xs font-bold text-gray-300">AI Safety Rules Active:</div>
+            <div className="text-xs font-bold text-gray-300">Active Rules:</div>
             <ul className="text-xs space-y-2 text-gray-400 font-medium">
               <li className="flex items-center space-x-2">
                 <span className="text-emerald-400 font-bold">✓</span>
-                <span>Alerts if knee collapse (valgus) detected</span>
+                <span>Valgus knee collapse check</span>
               </li>
               <li className="flex items-center space-x-2">
                 <span className="text-emerald-400 font-bold">✓</span>
-                <span>Alerts if lumbar rounding exceeds 15°</span>
+                <span>Lumbar rounding check (15° limit)</span>
               </li>
               <li className="flex items-center space-x-2">
                 <span className="text-emerald-400 font-bold">✓</span>
-                <span>Voice coach speech feedback enabled</span>
+                <span>Spoken audio corrections enabled</span>
               </li>
             </ul>
           </div>

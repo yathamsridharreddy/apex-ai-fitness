@@ -70,14 +70,14 @@ export const AiCoachPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Concise Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            24/7 AI Fitness & Indian Nutrition Coach
+            24/7 AI Fitness Coach
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Trained across 10 expert domains: Workout, Diet, Recovery, Supplements, Injuries,
-            Stretching, Sleep, Hydration, Motivation, Progress.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Ask any question about workouts, Indian nutrition, recovery, or injuries.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -135,7 +135,7 @@ export const AiCoachPage: React.FC = () => {
               >
                 {m.sender === 'bot' && (
                   <div className="text-xs font-extrabold text-cyan-300 uppercase tracking-wider mb-1">
-                    APEX AI COACH • INSTANT REPLY
+                    APEX AI COACH
                   </div>
                 )}
                 {m.text}

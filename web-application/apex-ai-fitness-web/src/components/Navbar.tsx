@@ -6,7 +6,6 @@ import {
   Flame,
   Award,
   HeartPulse,
-  Clock,
   Volume2,
   VolumeX,
   UserCheck,
@@ -50,85 +49,71 @@ export const Navbar: React.FC = () => {
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
-    { id: 'workout-engine', label: 'AI Workout Engine', icon: <Cpu className="w-3.5 h-3.5 text-cyan-400" /> },
-    { id: 'exercise-library', label: 'Exercise Library (3D)', icon: <Activity className="w-3.5 h-3.5 text-blue-400" /> },
+    { id: 'workout-engine', label: 'Workout Engine', icon: <Cpu className="w-3.5 h-3.5 text-cyan-400" /> },
+    { id: 'exercise-library', label: 'Exercise Library', icon: <Activity className="w-3.5 h-3.5 text-blue-400" /> },
     { id: 'live-workout', label: 'Live Workout', icon: <PlayCircle className="w-3.5 h-3.5 text-orange-400" /> },
-    { id: 'form-analysis', label: 'AI Form Camera', icon: <Camera className="w-3.5 h-3.5 text-emerald-400" /> },
-    { id: 'diet-planner', label: 'Indian Diet Planner', icon: <Utensils className="w-3.5 h-3.5 text-green-400" /> },
+    { id: 'form-analysis', label: 'Form Camera', icon: <Camera className="w-3.5 h-3.5 text-emerald-400" /> },
+    { id: 'diet-planner', label: 'Indian Diet', icon: <Utensils className="w-3.5 h-3.5 text-green-400" /> },
     { id: 'food-scanner', label: 'Food Scanner', icon: <Scan className="w-3.5 h-3.5 text-amber-400" /> },
     { id: 'muscle-map', label: '3D Muscle Map', icon: <User className="w-3.5 h-3.5 text-purple-400" /> },
-    { id: 'ai-coach', label: '24/7 AI Coach', icon: <Bot className="w-3.5 h-3.5 text-pink-400" /> },
-    { id: 'analytics', label: 'Analytics & Social', icon: <TrendingUp className="w-3.5 h-3.5 text-indigo-400" /> }
+    { id: 'ai-coach', label: 'AI Coach', icon: <Bot className="w-3.5 h-3.5 text-pink-400" /> },
+    { id: 'analytics', label: 'Analytics', icon: <TrendingUp className="w-3.5 h-3.5 text-indigo-400" /> }
   ];
 
   return (
     <header className="glass-header sticky top-0 z-50 px-4 sm:px-6 py-3 transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo & Clean Title */}
         <div
           className="flex items-center space-x-3 cursor-pointer"
           onClick={() => setActiveTab('dashboard')}
         >
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
-            <Zap className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <Zap className="w-5 h-5 text-white" />
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
-                APEX AI
-              </span>
-              <span className="px-2 py-0.5 text-[10px] font-extrabold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full uppercase tracking-wider">
-                Enterprise Pro
-              </span>
-            </div>
-            <p className="text-xs text-gray-400 font-medium hidden sm:block">
-              Full-Stack React + TypeScript + Express Server
-            </p>
+          <div className="flex items-center space-x-2">
+            <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
+              APEX AI
+            </span>
+            <span className="px-2 py-0.5 text-[10px] font-extrabold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full uppercase tracking-wider">
+              PRO
+            </span>
           </div>
         </div>
 
-        {/* Live User Telemetry Pills */}
+        {/* Essential Telemetry Pills */}
         <div className="hidden lg:flex items-center space-x-3">
-          <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 font-semibold text-xs shadow-sm">
-            <Flame className="w-4 h-4 text-orange-500 animate-bounce" />
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 font-semibold text-xs">
+            <Flame className="w-4 h-4 text-orange-500" />
             <span>{profile.streakDays} Day Streak</span>
           </div>
-          <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold text-xs shadow-sm">
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold text-xs">
             <Award className="w-4 h-4 text-blue-500" />
-            <span>
-              Lvl {profile.level} • {profile.totalXp} XP
-            </span>
+            <span>Lvl {profile.level} • {profile.totalXp} XP</span>
           </div>
-          <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold text-xs shadow-sm">
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold text-xs">
             <HeartPulse className="w-4 h-4 text-emerald-500" />
             <span>{profile.recoveryScore}% Recovery</span>
           </div>
-          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 font-mono text-xs">
-            <Clock className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Tuni, IN • {timeStr}</span>
-          </div>
         </div>
 
-        {/* Controls */}
+        {/* Clean Controls */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           <button
             onClick={toggleVoiceCoach}
-            className="px-3.5 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/40 text-blue-400 flex items-center space-x-1.5 text-xs font-semibold transition"
+            className="px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/40 text-blue-400 flex items-center space-x-1.5 text-xs font-semibold transition"
           >
             {isVoiceCoachOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            <span className="hidden md:inline">
-              Voice Coach: {isVoiceCoachOn ? 'ON' : 'OFF'}
-            </span>
+            <span className="hidden md:inline">Voice: {isVoiceCoachOn ? 'ON' : 'OFF'}</span>
           </button>
 
-          {/* Theme Mode Switcher */}
+          {/* Theme Switcher */}
           <div className="flex items-center bg-white/10 dark:bg-black/40 p-1 rounded-xl border border-white/10">
             <button
               onClick={() => {
                 soundService.playClick();
                 setTheme('dark');
               }}
-              title="Apple Dark Mode"
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                 theme === 'dark'
                   ? 'bg-blue-600 text-white shadow-sm'
@@ -142,7 +127,6 @@ export const Navbar: React.FC = () => {
                 soundService.playClick();
                 setTheme('oled');
               }}
-              title="OLED Pure Black"
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                 theme === 'oled'
                   ? 'bg-blue-600 text-white shadow-sm'
@@ -156,7 +140,6 @@ export const Navbar: React.FC = () => {
                 soundService.playClick();
                 setTheme('light');
               }}
-              title="Apple Light Mode"
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                 theme === 'light'
                   ? 'bg-blue-600 text-white shadow-sm'
@@ -169,7 +152,7 @@ export const Navbar: React.FC = () => {
 
           <button
             onClick={openOnboardingModal}
-            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold flex items-center space-x-1.5 transition"
+            className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold flex items-center space-x-1.5 transition"
           >
             <UserCheck className="w-4 h-4 text-cyan-400" />
             <span className="hidden sm:inline">Profile</span>
@@ -178,7 +161,7 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setActiveTab('admin')}
             className="p-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-400 transition"
-            title="Enterprise Admin Portal"
+            title="Admin Portal"
           >
             <Shield className="w-4 h-4" />
           </button>

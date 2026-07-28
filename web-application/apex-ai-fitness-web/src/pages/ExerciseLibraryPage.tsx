@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useFitnessStore } from '../store/useFitnessStore';
-import { Activity, Search, ArrowRight, Home } from 'lucide-react';
+import { Search, ArrowRight, Home } from 'lucide-react';
 import { ExerciseItem } from '../types';
 
 export const ExerciseLibraryPage: React.FC = () => {
-  const { openExerciseModal, enableHomeWorkoutMode } = useFitnessStore();
+  const { openExerciseModal } = useFitnessStore();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('ALL');
   const [onlyNoGym, setOnlyNoGym] = useState(false);
 
   const EXERCISE_DB: ExerciseItem[] = [
-    // 12 ZERO GYM EQUIPMENT EXERCISES (100% WITHOUT GYM EQUIPMENT - REAL NO-GYM IMAGES)
     {
       slug: 'bodyweight-jump-squat',
       name: 'Explosive Bodyweight Jump Squat',
@@ -206,7 +205,7 @@ export const ExerciseLibraryPage: React.FC = () => {
       dumbbellVersion: 'Dumbbell Thruster'
     },
 
-    // COMMERCIAL GYM EXERCISES (BARBELL / RACK) FOR CONTRAST
+    // 3 GYM EXERCISES FOR CONTRAST
     {
       slug: 'barbell-back-squat',
       name: 'Barbell Back Squat',
@@ -306,13 +305,14 @@ export const ExerciseLibraryPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Clean Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            3D Exercise Library (Gym & Zero-Gym Equipment)
+            3D Exercise Library
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Featuring high-definition 3D human models, primary/secondary/stabilizer highlights, and 100% Without Gym Equipment bodyweight variations with real No-Gym 3D imagery.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Gym & 100% Zero-Gym bodyweight calisthenics with photorealistic 3D human motion.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -325,7 +325,7 @@ export const ExerciseLibraryPage: React.FC = () => {
             }`}
           >
             <Home className="w-4 h-4" />
-            <span>{onlyNoGym ? '🏠 Showing 100% Zero-Gym Only' : 'Filter: Show Zero-Gym Only'}</span>
+            <span>{onlyNoGym ? '🏠 Showing Zero-Gym Only' : 'Show Zero-Gym Only'}</span>
           </button>
           <div className="relative">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
@@ -367,7 +367,7 @@ export const ExerciseLibraryPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Clean Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((ex) => (
           <div
@@ -393,7 +393,7 @@ export const ExerciseLibraryPage: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="p-5 space-y-2.5">
+            <div className="p-5 space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="font-extrabold text-base text-white">{ex.name}</h4>
                 <span className="text-xs text-emerald-400 font-bold">{ex.difficulty}</span>
@@ -407,7 +407,7 @@ export const ExerciseLibraryPage: React.FC = () => {
                   onClick={() => openExerciseModal(ex)}
                   className="text-blue-400 font-bold hover:underline flex items-center space-x-1"
                 >
-                  <span>3D Anatomical Guide</span>
+                  <span>3D Guide</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
