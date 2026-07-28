@@ -9,7 +9,8 @@ export const WorkoutEnginePage: React.FC = () => {
     setSelectedWorkoutType,
     openExerciseModal,
     setActiveTab,
-    enableHomeWorkoutMode
+    enableHomeWorkoutMode,
+    showToast
   } = useFitnessStore();
 
   const EXERCISE_DB: ExerciseItem[] = [
@@ -256,7 +257,10 @@ export const WorkoutEnginePage: React.FC = () => {
           </button>
           <select
             value={selectedWorkoutType}
-            onChange={(e) => setSelectedWorkoutType(e.target.value)}
+            onChange={(e) => {
+              setSelectedWorkoutType(e.target.value);
+              showToast(`Protocol switched to ${e.target.value.replace(/_/g, ' ')}`, 'info');
+            }}
             className="px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm font-bold text-white focus:outline-none focus:border-blue-500"
           >
             <option value="PUSH_PULL_LEGS" className="bg-gray-900">
@@ -303,7 +307,7 @@ export const WorkoutEnginePage: React.FC = () => {
             </option>
           </select>
           <button
-            onClick={() => alert('Protocol Generated! Your progressive overload targets are active.')}
+            onClick={() => showToast('Protocol Generated! Your progressive overload targets are active.', 'success')}
             className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-extrabold shadow-lg shadow-blue-500/30 transition"
           >
             Generate Plan

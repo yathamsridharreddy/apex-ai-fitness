@@ -26,7 +26,7 @@ ChartJS.register(
 );
 
 export const AnalyticsPage: React.FC = () => {
-  const { profile } = useFitnessStore();
+  const { profile, showToast } = useFitnessStore();
   const [chartType, setChartType] = useState<'strength' | 'weight' | 'consistency'>('strength');
 
   const strengthData = {
@@ -270,8 +270,9 @@ export const AnalyticsPage: React.FC = () => {
           <button
             onClick={() => {
               soundService.playSuccess();
-              alert(
-                'All Apple Watch & Garmin telemetry synced! Resting Heart Rate: 54 bpm, HRV: 78 ms.'
+              showToast(
+                'All Apple Watch & Garmin telemetry synced! HR: 54 bpm, HRV: 78 ms.',
+                'success'
               );
             }}
             className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-lg transition"

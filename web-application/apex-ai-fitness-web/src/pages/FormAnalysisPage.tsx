@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { Camera } from 'lucide-react';
 import { soundService } from '../services/soundService';
+import { useFitnessStore } from '../store/useFitnessStore';
 
 export const FormAnalysisPage: React.FC = () => {
+  const { showToast } = useFitnessStore();
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
   const [alertTitle, setAlertTitle] = useState<string>('OPTIMAL FORM DETECTED');
   const [alertMsg, setAlertMsg] = useState<string>(
@@ -21,12 +23,14 @@ export const FormAnalysisPage: React.FC = () => {
           videoRef.current.srcObject = stream;
         }
         setIsCameraActive(true);
+        showToast('Live AI Camera Form Analyzer Active', 'success');
         soundService.playVoiceCue(
           '/audio/workout_start.mp3',
           'Live AI Camera Form Analyzer initialized. Ensure full body is visible.'
         );
       } catch (err) {
-        alert('Webcam access was denied or not available. Switching to simulated AI Telemetry mode!');
+        // Silently and cleanly switch to AI Telemetry & Interactive Vision Mode (zero intrusive browser alert popups)
+        showToast('AI Telemetry Mode Active: Interactive pose simulation running.', 'info');
         simulateCorrection('DEPTH');
       }
     } else {
@@ -35,6 +39,7 @@ export const FormAnalysisPage: React.FC = () => {
         stream.getTracks().forEach((track) => track.stop());
       }
       setIsCameraActive(false);
+      showToast('Camera Form Analyzer Stopped', 'info');
     }
   };
 
@@ -45,6 +50,7 @@ export const FormAnalysisPage: React.FC = () => {
       setAlertMsg('Increase depth! Lower hips until thighs are parallel to the floor.');
       setAlertScore('75% Score');
       setScoreColor('text-orange-400');
+      showToast('Form Tip: Lower hips until thighs are parallel to the floor', 'info');
       soundService.playVoiceCue(
         '/audio/form_squat_depth.mp3',
         'Keep your chest up and increase your squat depth until your thighs are parallel to the floor.'
@@ -54,6 +60,7 @@ export const FormAnalysisPage: React.FC = () => {
       setAlertMsg('Straighten back! Maintain a neutral lumbar spine and brace core.');
       setAlertScore('70% Score');
       setScoreColor('text-red-400');
+      showToast('Posture Alert: Straighten back and brace core', 'error');
       soundService.playVoiceCue(
         '/audio/form_back_straight.mp3',
         'Maintain a neutral spine and engage your core. Straighten your back throughout the movement.'
@@ -63,6 +70,7 @@ export const FormAnalysisPage: React.FC = () => {
       setAlertMsg('Keep elbows tucked to 45° to protect rotator cuffs!');
       setAlertScore('82% Score');
       setScoreColor('text-cyan-400');
+      showToast('Safety Tip: Tuck elbows to 45 degrees', 'info');
       soundService.playVoiceCue(
         '/audio/form_back_straight.mp3',
         'Keep elbows tucked to 45 degrees to protect your shoulder joint.'

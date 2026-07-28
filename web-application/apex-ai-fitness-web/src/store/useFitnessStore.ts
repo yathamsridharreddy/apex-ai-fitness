@@ -1,8 +1,15 @@
-// APEX AI FITNESS — PRO (Zustand Full-Stack State Store with 100% Zero Gym Equipment Workouts)
+// APEX AI FITNESS — PRO (Zustand Full-Stack State Store with Apple Toast Notification Engine)
+// Zero intrusive browser alert popups — sleek glassmorphic in-app toast banners.
 
 import { create } from 'zustand';
 import { ExerciseItem, IndianFoodItem, TabId, ThemeMode, UserProfile } from '../types';
 import { soundService } from '../services/soundService';
+
+export interface ToastMessage {
+  visible: boolean;
+  message: string;
+  type: 'success' | 'info' | 'error';
+}
 
 interface FitnessState {
   theme: ThemeMode;
@@ -16,6 +23,7 @@ interface FitnessState {
   isVoiceCoachOn: boolean;
   selectedWorkoutType: string;
   isVegOnly: boolean;
+  toast: ToastMessage | null;
   
   // Active Workout Live Player
   liveWorkout: {
@@ -40,6 +48,8 @@ interface FitnessState {
   toggleVoiceCoach: () => void;
   setSelectedWorkoutType: (type: string) => void;
   toggleVegOnly: () => void;
+  showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
+  hideToast: () => void;
   
   // Actions
   logWater: (liters: number) => void;
@@ -104,6 +114,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
   isVoiceCoachOn: true,
   selectedWorkoutType: 'PUSH_PULL_LEGS',
   isVegOnly: true,
+  toast: null,
 
   liveWorkout: {
     exerciseSlug: 'barbell-back-squat',
@@ -142,12 +153,28 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
   toggleVoiceCoach: () => {
     const nextState = soundService.toggleVoiceCoach();
     set({ isVoiceCoachOn: nextState });
+    get().showToast(`Voice Coach: ${nextState ? 'ON' : 'OFF'}`, 'info');
   },
   setSelectedWorkoutType: (selectedWorkoutType) => set({ selectedWorkoutType }),
   toggleVegOnly: () => {
     soundService.playClick();
-    set((state) => ({ isVegOnly: !state.isVegOnly }));
+    set((state) => {
+      const next = !state.isVegOnly;
+      get().showToast(`Filter updated: ${next ? 'Vegetarian Only' : 'All Foods'}`, 'info');
+      return { isVegOnly: next };
+    });
   },
+
+  showToast: (message, type = 'success') => {
+    set({ toast: { visible: true, message, type } });
+    setTimeout(() => {
+      if (get().toast?.message === message) {
+        set({ toast: null });
+      }
+    }, 3800);
+  },
+
+  hideToast: () => set({ toast: null }),
 
   logWater: (liters) => {
     soundService.playClick();
@@ -157,6 +184,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         currentWaterLiters: Number((state.profile.currentWaterLiters + liters).toFixed(2))
       }
     }));
+    get().showToast(`Hydration Logged: +${liters * 1000}ml water!`, 'success');
     soundService.playVoiceCue('/audio/workout_start.mp3', `Logged ${liters * 1000} milliliters of water.`);
   },
 
@@ -169,6 +197,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         currentProteinConsumed: state.profile.currentProteinConsumed + protein
       }
     }));
+    get().showToast(`Logged Meal: ${name} (+${calories} kcal, +${protein}g Protein)`, 'success');
   },
 
   toggleCompleteSet: (idx) => {
@@ -176,6 +205,9 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
     set((state) => {
       const nextSets = [...state.liveWorkout.sets];
       nextSets[idx] = { ...nextSets[idx], isCompleted: !nextSets[idx].isCompleted };
+      if (nextSets[idx].isCompleted) {
+        get().showToast(`Set ${nextSets[idx].setNum} Completed! Rest timer active.`, 'success');
+      }
       return {
         liveWorkout: {
           ...state.liveWorkout,
@@ -189,6 +221,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
     soundService.playClick();
     set((state) => {
       const nextNum = state.liveWorkout.sets.length + 1;
+      get().showToast(`Set ${nextNum} added to current protocol`, 'info');
       return {
         liveWorkout: {
           ...state.liveWorkout,
@@ -208,6 +241,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         totalXp: state.profile.totalXp + 250
       }
     }));
+    get().showToast('Workout Complete! +250 XP Awarded & Streak Increased!', 'success');
     soundService.playVoiceCue('/audio/workout_complete.mp3', 'Workout complete! You set a new personal record and earned 250 XP!');
   },
 
@@ -223,7 +257,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
       liveWorkout: {
         exerciseSlug: 'bodyweight-jump-squat',
         title: 'Explosive Bodyweight Jump Squat',
-        equipmentNote: '100% Without Gym Equipment (Home Floor)',
+        equipmentNote: '100% Zero Gym Equipment (Home Floor)',
         sets: [
           { setNum: 1, weight: 0.0, reps: 15, isCompleted: true },
           { setNum: 2, weight: 0.0, reps: 15, isCompleted: false },
@@ -233,6 +267,7 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         elapsedSeconds: 0
       }
     });
-    soundService.playVoiceCue('/audio/workout_start.mp3', 'Home workout without gym equipment enabled! Zero gym equipment required today. Let\'s begin with explosive bodyweight jump squats.');
+    get().showToast('Switched to 100% Zero-Gym Mode! Protocol updated to home calisthenics.', 'success');
+    soundService.playVoiceCue('/audio/workout_start.mp3', 'Home workout without gym equipment enabled! Zero gym equipment required today.');
   }
 }));

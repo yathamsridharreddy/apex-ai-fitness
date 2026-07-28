@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useFitnessStore } from './store/useFitnessStore';
 import { Navbar } from './components/Navbar';
+import { ToastBanner } from './components/ToastBanner';
 import { DashboardPage } from './pages/DashboardPage';
 import { WorkoutEnginePage } from './pages/WorkoutEnginePage';
 import { ExerciseLibraryPage } from './pages/ExerciseLibraryPage';
@@ -36,6 +37,9 @@ const App: React.FC = () => {
 
       {/* Glass Navigation Header */}
       <Navbar />
+
+      {/* Global Toast Notification Banner (Zero browser alerts) */}
+      <ToastBanner />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 pb-28 relative z-10">

@@ -3,7 +3,7 @@ import { useFitnessStore } from '../store/useFitnessStore';
 import { soundService } from '../services/soundService';
 
 export const FoodScannerPage: React.FC = () => {
-  const { logMeal } = useFitnessStore();
+  const { logMeal, showToast } = useFitnessStore();
 
   const [imgUrl, setImgUrl] = useState<string>('images/food_indian_thali.jpg');
   const [foodName, setFoodName] = useState<string>(
@@ -58,7 +58,7 @@ export const FoodScannerPage: React.FC = () => {
     setHealthScore(91);
     setAlternative('Good protein content! Add 50g boiled sprouts for an extra +6g dietary fiber.');
     soundService.playSuccess();
-    alert('AI Vision analysis complete! Nutritional breakdown updated.');
+    showToast('AI Vision analysis complete! Nutritional breakdown updated.', 'success');
   };
 
   return (
@@ -156,10 +156,7 @@ export const FoodScannerPage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => {
-              logMeal(foodName, calories, protein);
-              alert(`Logged: ${foodName} (+${calories} kcal, +${protein}g protein)!`);
-            }}
+            onClick={() => logMeal(foodName, calories, protein)}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/40 transition"
           >
             + Add to Today's Nutritional Log

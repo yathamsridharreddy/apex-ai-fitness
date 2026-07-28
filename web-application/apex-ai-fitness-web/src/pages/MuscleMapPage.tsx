@@ -4,7 +4,7 @@ import { soundService } from '../services/soundService';
 import { ExerciseItem } from '../types';
 
 export const MuscleMapPage: React.FC = () => {
-  const { openExerciseModal } = useFitnessStore();
+  const { openExerciseModal, showToast } = useFitnessStore();
   const [view, setView] = useState<'FRONT' | 'BACK'>('FRONT');
   const [selectedMuscle, setSelectedMuscle] = useState<string>('Chest');
 
@@ -225,6 +225,7 @@ export const MuscleMapPage: React.FC = () => {
   const handleSelectMuscle = (m: string) => {
     soundService.playClick();
     setSelectedMuscle(m);
+    showToast(`Highlighted Muscle: ${m}`, 'info');
   };
 
   const matching = EXERCISE_DB.filter(

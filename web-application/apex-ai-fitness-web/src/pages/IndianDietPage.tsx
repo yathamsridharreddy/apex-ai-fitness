@@ -4,7 +4,7 @@ import { soundService } from '../services/soundService';
 import { IndianFoodItem } from '../types';
 
 export const IndianDietPage: React.FC = () => {
-  const { profile, isVegOnly, toggleVegOnly, logMeal } = useFitnessStore();
+  const { profile, isVegOnly, toggleVegOnly, logMeal, showToast } = useFitnessStore();
 
   const INDIAN_FOOD_DB: IndianFoodItem[] = [
     {
@@ -158,7 +158,6 @@ export const IndianDietPage: React.FC = () => {
     const cal = Number(prompt('Enter Calories:', '420') || '420');
     const pro = Number(prompt('Enter Protein (grams):', '24') || '24');
     logMeal(name, cal, pro);
-    alert(`Logged Custom Meal: ${name} (+${cal} kcal, +${pro}g protein)!`);
   };
 
   return (
@@ -242,10 +241,7 @@ export const IndianDietPage: React.FC = () => {
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
               <span className="text-purple-400 font-extrabold">{f.protein}g Protein</span>
               <button
-                onClick={() => {
-                  logMeal(f.name, f.calories, f.protein);
-                  alert(`Logged: ${f.name} (+${f.calories} kcal, +${f.protein}g protein)!`);
-                }}
+                onClick={() => logMeal(f.name, f.calories, f.protein)}
                 className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition"
               >
                 + Log Meal

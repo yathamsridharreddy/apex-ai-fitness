@@ -10,7 +10,8 @@ export const LiveWorkoutPage: React.FC = () => {
     toggleCompleteSet,
     addLiveSet,
     finishLiveWorkout,
-    logWater
+    logWater,
+    showToast
   } = useFitnessStore();
 
   const [restTimeRemain, setRestTimeRemain] = useState<number>(0);
@@ -57,6 +58,7 @@ export const LiveWorkoutPage: React.FC = () => {
   const startRestTimer = (sec: number) => {
     soundService.playClick();
     setRestTimeRemain(sec);
+    showToast(`Rest timer started: ${sec} seconds`, 'info');
   };
 
   const formatTime = (sec: number) => {
@@ -178,7 +180,7 @@ export const LiveWorkoutPage: React.FC = () => {
     const nextSlug = exerciseOrder[nextIdx];
     setCurrentSlug(nextSlug);
     const nextInfo = EX_INFO[nextSlug];
-    alert(`Switched to Next Exercise: ${nextInfo.name}! (${nextInfo.equip})`);
+    showToast(`Switched to Next Exercise: ${nextInfo.name}!`, 'success');
   };
 
   return (
@@ -282,7 +284,7 @@ export const LiveWorkoutPage: React.FC = () => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 7 cols: Unified Apple-minimal 60-FPS Real Human Biomechanical Demonstration */}
+        {/* Left 7 cols: Real Human Biomechanical Motion Engine */}
         <div className="lg:col-span-7 glass-card p-6 flex flex-col justify-between space-y-4">
           
           <RealHumanMotionVisualizer
@@ -325,9 +327,7 @@ export const LiveWorkoutPage: React.FC = () => {
                   key={val}
                   onClick={() => {
                     soundService.playSuccess();
-                    alert(
-                      `Set RPE recorded: ${val}. AI progressive overload will adjust your next working set load automatically!`
-                    );
+                    showToast(`Set RPE recorded: ${val}. AI progressive overload calibrated!`, 'success');
                   }}
                   className="px-2.5 py-1 rounded bg-white/10 hover:bg-blue-600 text-xs font-bold transition"
                 >
@@ -391,7 +391,7 @@ export const LiveWorkoutPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Clean Functional Controls */}
+          {/* Controls */}
           <div className="flex items-center space-x-2.5 pt-3 border-t border-white/10">
             <button
               onClick={addLiveSet}

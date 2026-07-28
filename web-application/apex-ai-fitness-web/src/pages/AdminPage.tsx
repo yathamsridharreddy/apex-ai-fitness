@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { soundService } from '../services/soundService';
+import { useFitnessStore } from '../store/useFitnessStore';
 
 export const AdminPage: React.FC = () => {
+  const { showToast } = useFitnessStore();
   const [subTab, setSubTab] = useState<'users' | 'exercises' | 'nutrition'>('users');
 
   const exportCSV = () => {
@@ -16,6 +18,7 @@ export const AdminPage: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    showToast('Exported CSV Telemetry Report: apex_ai_enterprise_report.csv', 'success');
   };
 
   const addRecord = () => {
@@ -25,7 +28,7 @@ export const AdminPage: React.FC = () => {
       'New Custom Exercise Protocol'
     );
     if (name) {
-      alert(`Record "${name}" added to PostgreSQL/SQLite Database Queue!`);
+      showToast(`Record "${name}" added to PostgreSQL/SQLite Database Queue!`, 'success');
       soundService.playSuccess();
     }
   };
@@ -45,7 +48,7 @@ export const AdminPage: React.FC = () => {
         </div>
         <div className="flex items-center space-x-3">
           <button
-            onClick={() => alert('Exported complete JSON dump!')}
+            onClick={() => showToast('Exported complete JSON dump!', 'success')}
             className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-extrabold text-white border border-white/15"
           >
             Export JSON
