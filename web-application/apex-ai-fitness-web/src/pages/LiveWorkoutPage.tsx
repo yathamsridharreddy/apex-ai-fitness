@@ -58,7 +58,7 @@ export const LiveWorkoutPage: React.FC = () => {
       name: 'Explosive Bodyweight Jump Squat',
       primary: 'Quadriceps',
       secondary: 'Glutes, Hamstrings, Calves',
-      image: 'images/exercise_barbell_squat.jpg',
+      image: 'images/exercise_bodyweight_squat.jpg',
       tempo: '2-0-X-0 (Explosive Jump)',
       breath: 'Inhale Down / Exhale Jump',
       equip: '100% Without Gym Equipment (Home Floor)'
@@ -67,7 +67,7 @@ export const LiveWorkoutPage: React.FC = () => {
       name: 'Strict Anatomical Floor Push-Up',
       primary: 'Pectoralis Major',
       secondary: 'Anterior Deltoids, Triceps',
-      image: 'images/exercise_bench_press.jpg',
+      image: 'images/exercise_floor_pushup.jpg',
       tempo: '2-1-1-0 (1s Floor Pause)',
       breath: 'Inhale Down / Exhale Up',
       equip: '100% Without Gym Equipment (Home Floor)'
@@ -76,7 +76,7 @@ export const LiveWorkoutPage: React.FC = () => {
       name: 'Chair Bulgarian Split Squat',
       primary: 'Quadriceps',
       secondary: 'Gluteus Maximus, Hamstrings',
-      image: 'images/exercise_barbell_squat.jpg',
+      image: 'images/exercise_chair_split_squat.jpg',
       tempo: '3-1-1-0 (3s Negative)',
       breath: 'Inhale Down / Exhale Up',
       equip: '100% Without Gym Equipment (Home Chair)'
