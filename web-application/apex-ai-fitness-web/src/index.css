@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#08090D] text-white transition-colors duration-300;
+  }
+  body.light-mode {
+    @apply bg-[#F5F5F7] text-[#1D1D1F];
+  }
+  body.oled-mode {
+    @apply bg-black text-white;
+  }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.065);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light-mode .glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
+}
+
+.oled-mode .glass-card {
+  background: rgba(15, 15, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.glass-card:hover {
+  border-color: rgba(10, 132, 255, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px -10px rgba(10, 132, 255, 0.15);
+}
+
+.glass-header {
+  background: rgba(8, 9, 13, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.light-mode .glass-header {
+  background: rgba(245, 245, 247, 0.88);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.oled-mode .glass-header {
+  background: rgba(0, 0, 0, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ambient-glow-1 {
+  position: fixed;
+  top: -150px;
+  left: 15%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-glow-2 {
+  position: fixed;
+  bottom: -100px;
+  right: 10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(48, 209, 88, 0.08) 0%, rgba(0,0,0,0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.light-mode .ambient-glow-1, .light-mode .ambient-glow-2 {
+  opacity: 0.3;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+.light-mode ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.muscle-interactive {
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.muscle-interactive:hover {
+  fill: #0A84FF !important;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 12px rgba(10, 132, 255, 0.8));
+}
+.muscle-active {
+  fill: #0A84FF !important;
+  filter: drop-shadow(0 0 14px rgba(10, 132, 255, 0.9));
+}
