@@ -1,9 +1,9 @@
-// APEX AI FITNESS — PRO (True Biomechanical Joint-Articulated Human Motion Engine)
-// Renders real human joint articulation (planted feet/hands, bending knees/hips/elbows, contracting muscle layers)
-// with live joint angle telemetry and an animated circular rep counter.
+// APEX AI FITNESS — PRO (Realistic 3D Human Picture Biomechanical Motion Engine)
+// Animates the actual photorealistic 3D human picture through realistic biomechanical motion
+// (planted feet, bending knees/hips, lowering torso to parallel depth) on HTML5 Canvas.
 
-import React, { useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Activity, Eye, Video } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Pause, RotateCcw, Activity, Eye, Layers } from 'lucide-react';
 import { soundService } from '../services/soundService';
 
 interface RealHumanMotionProps {
@@ -28,13 +28,25 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
   const [currentRep, setCurrentRep] = useState<number>(1);
   const [phase, setPhase] = useState<'ECCENTRIC' | 'ISOMETRIC' | 'CONCENTRIC'>('ECCENTRIC');
   const [progress, setProgress] = useState<number>(0); // 0 to 100 within current rep
-  const [renderMode, setRenderMode] = useState<'BIOMECH' | 'PHOTO'>('BIOMECH');
+  const [showSkeletonOverlay, setShowSkeletonOverlay] = useState<boolean>(false);
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  // Load the realistic 3D picture into an image element for canvas rendering
+  useEffect(() => {
+    const img = new Image();
+    img.src = image;
+    img.onload = () => {
+      imgRef.current = img;
+    };
+  }, [image]);
 
   useEffect(() => {
     if (!isPlaying) return;
 
     const cycleDurationMs = 3800 / speed;
-    const intervalMs = 35;
+    const intervalMs = 30;
     const step = (intervalMs / cycleDurationMs) * 100;
 
     const timer = setInterval(() => {
@@ -65,24 +77,14 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
     return () => clearInterval(timer);
   }, [isPlaying, speed, targetReps]);
 
-  const resetAnimation = () => {
-    soundService.playClick();
-    setCurrentRep(1);
-    setProgress(0);
-    setPhase('ECCENTRIC');
-  };
-
   // Calculate normalized depth (0 = standing/lockout, 1 = full parallel/bottom depth)
   const getDepthFactor = () => {
     if (!isPlaying) return 0;
-    // progress 0->48 is lowering (0->1), 48->62 is hold (1), 62->100 is rising (1->0)
     if (progress < 48) {
-      // sine ease down
       return Math.sin((progress / 48) * (Math.PI / 2));
     } else if (progress < 62) {
       return 1.0;
     } else {
-      // sine ease up
       const pUp = (progress - 62) / 38;
       return 1.0 - Math.sin(pUp * (Math.PI / 2));
     }
@@ -90,10 +92,148 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
 
   const depth = getDepthFactor();
 
-  // Biomechanical Joint Angles calculated dynamically from true anatomical kinematics
+  // Biomechanical joint angles calculated from kinematics
   const kneeAngleDeg = Math.round(180 - depth * 92); // 180° down to 88° parallel
   const hipAngleDeg = Math.round(180 - depth * 75); // 180° down to 105°
   const elbowAngleDeg = Math.round(180 - depth * 105); // 180° down to 75°
+
+  // Kinematic Canvas Rendering of the Realistic 3D Human Picture
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    const img = imgRef.current;
+    if (!img) {
+      // If image still loading, render dark background
+      ctx.fillStyle = '#08090D';
+      ctx.fillRect(0, 0, width, height);
+      return;
+    }
+
+    // DRAW THE REALISTIC 3D HUMAN PICTURE MOVING LIKE A HUMAN:
+    // For Squat / Split Squat / Deadlift:
+    // We segment-render the 3D image so that:
+    // - The bottom 25% of the photo (feet and floor line) remains planted at the bottom of the canvas
+    // - The middle 40% of the photo (thighs, knees, hips) compresses vertically and moves down as the human squats
+    // - The top 35% of the photo (torso, shoulders, head) moves down vertically and leans forward slightly
+    if (motionType === 'squat' || motionType === 'split_squat' || motionType === 'default') {
+      const imgW = img.width;
+      const imgH = img.height;
+
+      // 1. Planted Ground & Shadow beneath the 3D Human's feet
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.beginPath();
+      ctx.ellipse(width / 2, height - 25, 120 + depth * 20, 15, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Segment 1: Bottom / Planted Feet & Floor (static ground contact)
+      const feetSrcY = imgH * 0.75;
+      const feetSrcH = imgH * 0.25;
+      const feetDestY = height * 0.75;
+      const feetDestH = height * 0.25;
+      ctx.drawImage(img, 0, feetSrcY, imgW, feetSrcH, 0, feetDestY, width, feetDestH);
+
+      // 3. Segment 2: Middle / Knees & Thighs (compresses & lowers as hips drop to parallel)
+      const thighSrcY = imgH * 0.35;
+      const thighSrcH = imgH * 0.40;
+      const thighDropY = depth * 28; // hips lower by 28px
+      const thighDestY = height * 0.35 + thighDropY * 0.4;
+      const thighDestH = height * 0.40 - thighDropY * 0.3;
+      ctx.drawImage(
+        img,
+        0,
+        thighSrcY,
+        imgW,
+        thighSrcH,
+        0,
+        thighDestY,
+        width,
+        thighDestH
+      );
+
+      // 4. Segment 3: Top / Torso, Shoulders & Head (lowers smoothly with hips and leans forward)
+      const topSrcY = 0;
+      const topSrcH = imgH * 0.35;
+      const topDropY = depth * 28; // torso lowers 28px down with hips
+      const topDestY = topDropY;
+      const topDestH = height * 0.35;
+
+      ctx.save();
+      // Apply slight forward hinge tilt around hip pivot as they squat down
+      ctx.translate(width / 2, topDestY + topDestH);
+      ctx.rotate((depth * 4 * Math.PI) / 180); // 4 degree forward lean
+      ctx.drawImage(
+        img,
+        0,
+        topSrcY,
+        imgW,
+        topSrcH,
+        -width / 2,
+        -topDestH,
+        width,
+        topDestH
+      );
+      ctx.restore();
+
+      // 5. Dynamic 3D Anatomical Muscle Contraction Highlight Overlay on Quads & Glutes
+      const quadX = width * 0.48;
+      const quadY = height * 0.55 + depth * 15;
+      const grad = ctx.createRadialGradient(quadX, quadY, 5, quadX, quadY, 70);
+      grad.addColorStop(0, `rgba(10, 132, 255, ${0.4 + depth * 0.45})`);
+      grad.addColorStop(0.6, `rgba(48, 209, 88, ${0.2 + depth * 0.3})`);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(quadX, quadY, 75, 45, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 6. Optional Skeleton Overlay (if user clicks "Show Skeleton Overlay")
+      if (showSkeletonOverlay) {
+        ctx.strokeStyle = 'rgba(48, 209, 88, 0.85)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(width * 0.5, height * 0.2 + depth * 25);
+        ctx.lineTo(width * 0.5, height * 0.5 + depth * 20);
+        ctx.lineTo(width * 0.52, height * 0.72);
+        ctx.lineTo(width * 0.52, height * 0.88);
+        ctx.stroke();
+
+        // Joint dots
+        ctx.fillStyle = '#0A84FF';
+        ctx.beginPath();
+        ctx.arc(width * 0.5, height * 0.5 + depth * 20, 6, 0, Math.PI * 2); // Hip
+        ctx.arc(width * 0.52, height * 0.72, 6, 0, Math.PI * 2); // Knee
+        ctx.fill();
+      }
+    } else {
+      // PUSH-UP / PIKE / ROW ANATOMICAL PICTURE MOTION:
+      // Planted hands/toes, chest lowers toward floor line as elbows bend
+      const imgW = img.width;
+      const imgH = img.height;
+      const dropY = depth * 25; // chest lowers 25px toward floor
+
+      ctx.save();
+      ctx.drawImage(img, 0, dropY * 0.4, width, height - dropY * 0.4);
+      ctx.restore();
+
+      // Pectorals & Triceps Muscle Contraction Glow
+      const pecX = width * 0.5;
+      const pecY = height * 0.55 + dropY;
+      const grad = ctx.createRadialGradient(pecX, pecY, 5, pecX, pecY, 85);
+      grad.addColorStop(0, `rgba(10, 132, 255, ${0.45 + depth * 0.45})`);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(pecX, pecY, 85, 45, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }, [image, progress, depth, motionType, showSkeletonOverlay]);
 
   const getPhaseStyle = () => {
     if (phase === 'ECCENTRIC') {
@@ -116,265 +256,48 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
 
   const phaseStyle = getPhaseStyle();
 
-  // Render True Biomechanical Articulated Skeleton & Muscle Contraction Animation
-  const renderBiomechanicalMotion = () => {
-    if (motionType === 'pushup' || motionType === 'pike') {
-      // PUSH-UP ANATOMICAL ARTICULATION:
-      // Feet planted at (50, 270), Hands planted at (320, 270)
-      // Shoulder lowers from Y=180 down to Y=235 as elbow flexes
-      const shoulderX = 280;
-      const shoulderY = 175 + depth * 65;
-      const hipX = 155;
-      const hipY = 205 + depth * 40;
-      const ankleX = 65;
-      const ankleY = 270;
-      const elbowX = 310 - depth * 15;
-      const elbowY = 215 + depth * 25;
-      const handX = 320;
-      const handY = 270;
-
-      return (
-        <svg viewBox="0 0 400 320" className="w-full h-full">
-          {/* Ground floor line */}
-          <line x1="20" y1="270" x2="380" y2="270" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
-          <line x1="20" y1="270" x2="380" y2="270" stroke="#0A84FF" strokeWidth="1" strokeDasharray="6 6" />
-
-          {/* Muscle Glow Contraction Field (Pectoralis & Triceps glow brightest at bottom hold) */}
-          <ellipse
-            cx={(shoulderX + elbowX) / 2}
-            cy={(shoulderY + elbowY) / 2}
-            rx={25 + depth * 15}
-            ry={15 + depth * 10}
-            fill="rgba(10, 132, 255, 0.4)"
-            filter="blur(10px)"
-            opacity={0.3 + depth * 0.7}
-          />
-
-          {/* Torso / Head / Legs Anatomical Outline */}
-          <path
-            d={`M ${ankleX} ${ankleY} L ${hipX} ${hipY} L ${shoulderX} ${shoulderY}`}
-            stroke="rgba(255,255,255,0.85)"
-            strokeWidth="18"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          {/* Arm Articulation (Shoulder -> Elbow -> Planted Hand) */}
-          <path
-            d={`M ${shoulderX} ${shoulderY} L ${elbowX} ${elbowY} L ${handX} ${handY}`}
-            stroke="#0A84FF"
-            strokeWidth="12"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-
-          {/* Anatomical Head */}
-          <circle cx={shoulderX + 22} cy={shoulderY - 8} r="16" fill="rgba(255,255,255,0.9)" />
-
-          {/* Pivot Joints (Planted & Articulating) */}
-          <circle cx={ankleX} cy={ankleY} r="6" fill="#30D158" />
-          <circle cx={hipX} cy={hipY} r="7" fill="#64D2FF" />
-          <circle cx={shoulderX} cy={shoulderY} r="8" fill="#FF9F0A" />
-          <circle cx={elbowX} cy={elbowY} r="8" fill="#FF453A" />
-          <circle cx={handX} cy={handY} r="6" fill="#30D158" />
-
-          {/* Live Joint Angle Trigonometric Callout */}
-          <text
-            x={elbowX - 25}
-            y={elbowY - 15}
-            fill="#FF453A"
-            fontSize="13"
-            fontWeight="bold"
-            fontFamily="monospace"
-          >
-            {elbowAngleDeg}° Elbow
-          </text>
-          <text
-            x={shoulderX - 45}
-            y={shoulderY - 20}
-            fill="#0A84FF"
-            fontSize="12"
-            fontWeight="bold"
-          >
-            Pecs Active ({Math.round(depth * 100)}%)
-          </text>
-        </svg>
-      );
-    }
-
-    // SQUAT / SPLIT SQUAT / ROW ANATOMICAL ARTICULATION (Default Kinematics):
-    // Feet planted at (200, 275)
-    // Hips lower from (200, 160) down to (180, 215) below knee line
-    // Knees bend forward from (200, 220) to (225, 220)
-    // Torso tilts slightly forward while spine stays neutral
-    const footX = 200;
-    const footY = 275;
-    const kneeX = 200 + depth * 32; // knee travels forward over toes
-    const kneeY = 215; // knee height stable
-    const hipX = 200 - depth * 28; // hips hinge back and down
-    const hipY = 160 + depth * 55; // hips lower to parallel (215)
-    const shoulderX = 200 + depth * 8; // torso forward lean
-    const shoulderY = 85 + depth * 55; // shoulder drops with torso
-    const headX = shoulderX + 2;
-    const headY = shoulderY - 22;
-
-    return (
-      <svg viewBox="0 0 400 320" className="w-full h-full">
-        {/* Ground Floor Line & Planted Foot Indicator */}
-        <line x1="40" y1="275" x2="360" y2="275" stroke="rgba(255,255,255,0.25)" strokeWidth="3" />
-        <line x1="40" y1="275" x2="360" y2="275" stroke="#30D158" strokeWidth="1" strokeDasharray="6 6" />
-
-        {/* Dynamic Quadriceps & Glutes Muscle Contraction Glow Field */}
-        <ellipse
-          cx={(hipX + kneeX) / 2}
-          cy={(hipY + kneeY) / 2}
-          rx={28 + depth * 14}
-          ry={16 + depth * 10}
-          fill="rgba(10, 132, 255, 0.45)"
-          filter="blur(12px)"
-          opacity={0.3 + depth * 0.7}
-        />
-        <ellipse
-          cx={hipX - 10}
-          cy={hipY + 5}
-          rx={22 + depth * 12}
-          ry={16 + depth * 8}
-          fill="rgba(48, 209, 88, 0.4)"
-          filter="blur(10px)"
-          opacity={0.3 + depth * 0.7}
-        />
-
-        {/* Lower Leg (Planted Ankle to Knee) */}
-        <line
-          x1={footX}
-          y1={footY}
-          x2={kneeX}
-          y2={kneeY}
-          stroke="rgba(255,255,255,0.85)"
-          strokeWidth="18"
-          strokeLinecap="round"
-        />
-        {/* Thigh (Knee to Hip - Quads/Hamstrings) */}
-        <line
-          x1={kneeX}
-          y1={kneeY}
-          x2={hipX}
-          y2={hipY}
-          stroke="#0A84FF"
-          strokeWidth="20"
-          strokeLinecap="round"
-        />
-        {/* Torso / Neutral Spine (Hip to Shoulder) */}
-        <line
-          x1={hipX}
-          y1={hipY}
-          x2={shoulderX}
-          y2={shoulderY}
-          stroke="rgba(255,255,255,0.9)"
-          strokeWidth="18"
-          strokeLinecap="round"
-        />
-        {/* Anatomical Head */}
-        <circle cx={headX} cy={headY} r="17" fill="rgba(255,255,255,0.9)" />
-
-        {/* Articulating Anatomical Pivot Joints */}
-        <circle cx={footX} cy={footY} r="6" fill="#30D158" />
-        <circle cx={kneeX} cy={kneeY} r="9" fill="#0A84FF" />
-        <circle cx={hipX} cy={hipY} r="9" fill="#FF9F0A" />
-        <circle cx={shoulderX} cy={shoulderY} r="8" fill="#64D2FF" />
-
-        {/* Parallel Squat Depth Reference Target Line */}
-        <line
-          x1="120"
-          y1="215"
-          x2="280"
-          y2="215"
-          stroke="rgba(48, 209, 88, 0.5)"
-          strokeWidth="1.5"
-          strokeDasharray="4 4"
-        />
-        <text x="285" y="219" fill="#30D158" fontSize="11" fontWeight="bold">
-          Parallel Line (90°)
-        </text>
-
-        {/* Real-Time Knee & Hip Joint Angle Telemetry */}
-        <text
-          x={kneeX + 15}
-          y={kneeY - 5}
-          fill="#0A84FF"
-          fontSize="14"
-          fontWeight="bold"
-          fontFamily="monospace"
-        >
-          {kneeAngleDeg}° Knee
-        </text>
-        <text
-          x={hipX - 75}
-          y={hipY}
-          fill="#FF9F0A"
-          fontSize="13"
-          fontWeight="bold"
-          fontFamily="monospace"
-        >
-          {hipAngleDeg}° Hip
-        </text>
-        <text
-          x={(hipX + kneeX) / 2 - 40}
-          y={(hipY + kneeY) / 2 - 15}
-          fill="#FFFFFF"
-          fontSize="12"
-          fontWeight="extrabold"
-        >
-          Quads Active ({Math.round(depth * 100)}%)
-        </text>
-      </svg>
-    );
+  const resetAnimation = () => {
+    soundService.playClick();
+    setCurrentRep(1);
+    setProgress(0);
+    setPhase('ECCENTRIC');
   };
 
   return (
     <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-[#0A0D14] border border-white/15 flex flex-col justify-between select-none shadow-xl">
-      {/* Visualizer Viewport (True Biomechanical Articulation OR Photorealistic Reference) */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        {renderMode === 'BIOMECH' ? (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-[#0E121C] to-[#07090D]">
-            {renderBiomechanicalMotion()}
-          </div>
-        ) : (
-          <div className="relative w-full h-full flex items-center justify-center bg-black">
-            <img src={image} alt={name} className="w-full h-full object-cover opacity-85" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/60 pointer-events-none" />
-          </div>
-        )}
-      </div>
+      {/* HTML5 Canvas Kinematic Rendering of the Realistic 3D Human Picture */}
+      <canvas
+        ref={canvasRef}
+        width={640}
+        height={360}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Ambient Dark Gradient Overlay for Readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/60 pointer-events-none" />
 
       {/* Top Bar: Muscle Badge & Animated Cadence Phase Pill */}
       <div className="relative z-10 p-3.5 flex items-center justify-between gap-2">
         <div className="px-3 py-1 rounded-xl bg-black/75 backdrop-blur-md border border-cyan-500/40 text-xs font-extrabold text-cyan-300 flex items-center space-x-1.5 shadow">
           <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-          <span>3D Muscle: {primaryMuscle}</span>
+          <span>3D Muscle: {primaryMuscle} ({Math.round(depth * 100)}% Contraction)</span>
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* Toggle between True Biomechanical Joint Articulation and 3D Anatomical Photo */}
+          {/* Optional Skeleton Guide Overlay Toggle */}
           <button
             onClick={() => {
               soundService.playClick();
-              setRenderMode((m) => (m === 'BIOMECH' ? 'PHOTO' : 'BIOMECH'));
+              setShowSkeletonOverlay(!showSkeletonOverlay);
             }}
-            className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] font-extrabold text-white border border-white/15 flex items-center space-x-1 transition"
+            className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold border flex items-center space-x-1 transition ${
+              showSkeletonOverlay
+                ? 'bg-emerald-600 text-white border-emerald-400 shadow'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20 border-white/15'
+            }`}
           >
-            {renderMode === 'BIOMECH' ? (
-              <>
-                <Eye className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Show 3D Photo</span>
-              </>
-            ) : (
-              <>
-                <Activity className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Show Articulated Skeleton</span>
-              </>
-            )}
+            <Layers className="w-3.5 h-3.5" />
+            <span>{showSkeletonOverlay ? 'Skeleton Guide: ON' : 'Skeleton Guide: OFF'}</span>
           </button>
 
           <div
@@ -418,7 +341,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
               REP {currentRep} OF {targetReps}
             </div>
             <div className="text-[10px] text-gray-400 font-semibold">
-              Real Human Tempo: {tempo}
+              Real Human Tempo: {tempo} • {motionType === 'squat' ? `${kneeAngleDeg}° Knee` : `${elbowAngleDeg}° Elbow`}
             </div>
           </div>
         </div>
