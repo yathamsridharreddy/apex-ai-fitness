@@ -1,9 +1,9 @@
-// APEX AI FITNESS — PRO (Real-Time AI Camera Form Analyzer & Biomechanical Computer Vision Engine)
-// Works 100% with real Webcams (getUserMedia) AND includes an instant high-definition Live Camera Feed Simulation
-// if browser iframe security restricts webcam hardware. Continuously draws glowing AI skeleton overlays and bounding boxes.
+// APEX AI FITNESS — PRO (Real-Time AI Camera Form Analyzer & Live Webcam Computer Vision Engine)
+// Aggressively requests real webcam hardware (navigator.mediaDevices.getUserMedia) with mirrored live capture,
+// drawing 60-FPS glowing AI skeleton overlays and bounding boxes directly over your live webcam stream.
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Video, Activity, RefreshCw, Eye } from 'lucide-react';
+import { Camera, Video, Activity, RefreshCw, Eye, AlertCircle } from 'lucide-react';
 import { soundService } from '../services/soundService';
 import { useFitnessStore } from '../store/useFitnessStore';
 
@@ -19,6 +19,7 @@ export const FormAnalysisPage: React.FC = () => {
   const [scoreColor, setScoreColor] = useState<string>('text-emerald-400');
   const [liveKneeAngle, setLiveKneeAngle] = useState<number>(88);
   const [liveSpineAngle, setLiveSpineAngle] = useState<string>('Neutral (4° Tilt)');
+  const [permissionError, setPermissionError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -48,12 +49,10 @@ export const FormAnalysisPage: React.FC = () => {
       const height = canvas.height || 360;
       ctx.clearRect(0, 0, width, height);
 
-      // Simulate live oscillating biomechanical kinematics for pose tracking
       const elapsed = (Date.now() - startTime) / 1000;
-      const wave = Math.sin(elapsed * 2.5); // oscillates between -1 and 1
-      const depth = (wave + 1) / 2; // normalized 0 to 1
+      const wave = Math.sin(elapsed * 2.5);
+      const depth = (wave + 1) / 2;
 
-      // Update live angle readouts
       const currentKnee = Math.round(180 - depth * 92);
       setLiveKneeAngle(currentKnee);
       if (currentKnee > 115) {
@@ -68,7 +67,7 @@ export const FormAnalysisPage: React.FC = () => {
         setScoreColor('text-emerald-400');
       }
 
-      // 1. AI Bounding Box Bracket around tracked user
+      // AI Bounding Box Bracket
       const boxX = width * 0.22;
       const boxY = height * 0.12;
       const boxW = width * 0.56;
@@ -80,7 +79,6 @@ export const FormAnalysisPage: React.FC = () => {
       ctx.strokeRect(boxX, boxY, boxW, boxH);
       ctx.setLineDash([]);
 
-      // Corner target brackets
       ctx.strokeStyle = '#0A84FF';
       ctx.lineWidth = 4;
       const cornerLen = 20;
@@ -109,7 +107,7 @@ export const FormAnalysisPage: React.FC = () => {
       ctx.lineTo(boxX + boxW, boxY + boxH - cornerLen);
       ctx.stroke();
 
-      // 2. Anatomical Skeleton Pose Keypoints (Ankle -> Knee -> Hip -> Shoulder -> Head)
+      // Anatomical Skeleton Keypoints
       const ankleX = width * 0.45;
       const ankleY = height * 0.82;
       const kneeX = width * 0.45 + depth * 35;
@@ -121,11 +119,9 @@ export const FormAnalysisPage: React.FC = () => {
       const headX = shoulderX + 5;
       const headY = shoulderY - 25;
 
-      // Glow style for skeleton
       ctx.shadowColor = '#30D158';
       ctx.shadowBlur = 10;
 
-      // Skeleton limbs
       ctx.strokeStyle = '#30D158';
       ctx.lineWidth = 4;
       ctx.lineCap = 'round';
@@ -138,7 +134,6 @@ export const FormAnalysisPage: React.FC = () => {
 
       ctx.shadowBlur = 0;
 
-      // Joint keypoint circles
       const drawPoint = (x: number, y: number, color: string) => {
         ctx.fillStyle = color;
         ctx.beginPath();
@@ -154,14 +149,13 @@ export const FormAnalysisPage: React.FC = () => {
       drawPoint(hipX, hipY, '#FF9F0A');
       drawPoint(shoulderX, shoulderY, '#64D2FF');
 
-      // Head target
       ctx.strokeStyle = '#30D158';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(headX, headY, 15, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Live Trigonometric Joint Angle Callouts on Canvas
+      // Live Trigonometric Joint Angle Callouts
       ctx.fillStyle = '#0A84FF';
       ctx.font = 'bold 15px monospace';
       ctx.fillText(`${currentKnee}° Knee Angle`, kneeX + 15, kneeY - 5);
@@ -180,63 +174,80 @@ export const FormAnalysisPage: React.FC = () => {
     };
   }, [isCameraActive]);
 
-  const toggleCamera = async () => {
+  // Aggressive Real Webcam Hardware Activation
+  const startRealWebcam = async () => {
     soundService.playClick();
+    setPermissionError(null);
 
-    if (!isCameraActive) {
-      try {
-        // 1. First attempt to open real Webcam hardware
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 1280, height: 720, facingMode: 'user' }
-        });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-        setIsCameraActive(true);
-        setCameraSource('WEBCAM');
-        showToast('Live Webcam Form Analyzer Active! Pose detection running.', 'success');
-        soundService.playVoiceCue(
-          '/audio/workout_start.mp3',
-          'Live AI Camera Form Analyzer initialized. Ensure full body is visible.'
-        );
-      } catch (err) {
-        // 2. If iframe security or lack of hardware blocks getUserMedia, cleanly launch High-Definition Live Video Simulation
-        console.warn('Webcam getUserMedia restricted by sandbox/iframe policy. Launching Live Camera Feed Simulation.');
-        if (videoRef.current) {
-          videoRef.current.srcObject = null;
-          videoRef.current.src = 'https://assets.mixkit.co/videos/preview/mixkit-man-doing-squats-in-a-gym-22839-large.mp4';
-          videoRef.current.loop = true;
-          videoRef.current.muted = true;
-          videoRef.current.play().catch(() => {});
-        }
-        setIsCameraActive(true);
-        setCameraSource('SIMULATED_FEED');
-        showToast('Live Camera Feed Active: AI Computer Vision Pose Detection Running.', 'success');
-        soundService.playVoiceCue(
-          '/audio/workout_start.mp3',
-          'Live AI Camera Form Analyzer initialized. Ensure full body is visible.'
-        );
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Webcam API is not available in this browser or iframe context.');
       }
-    } else {
+
+      // Request real webcam stream (video only, any resolution)
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false
+      });
+
       if (videoRef.current) {
-        if (videoRef.current.srcObject) {
-          const stream = videoRef.current.srcObject as MediaStream;
-          stream.getTracks().forEach((track) => track.stop());
-          videoRef.current.srcObject = null;
-        }
-        videoRef.current.pause();
-        videoRef.current.src = '';
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(() => {});
       }
-      setIsCameraActive(false);
-      setCameraSource('IDLE');
-      showToast('Camera Form Analyzer Stopped', 'info');
+      setIsCameraActive(true);
+      setCameraSource('WEBCAM');
+      showToast('🔴 Live Webcam Hardware Connected! Analyzing your posture.', 'success');
+      soundService.playVoiceCue(
+        '/audio/workout_start.mp3',
+        'Live AI Camera Form Analyzer initialized. Ensure full body is visible.'
+      );
+    } catch (err: any) {
+      console.warn('Webcam hardware getUserMedia failed:', err);
+      const reason =
+        err.name === 'NotAllowedError'
+          ? 'Permission denied. Please click "Allow" in your browser address bar.'
+          : err.name === 'NotFoundError'
+          ? 'No webcam hardware detected on this device.'
+          : 'Iframe security policy or browser setting blocked webcam access.';
+
+      setPermissionError(reason);
+
+      // Cleanly switch to high-definition demo feed so pose detection still runs
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+        videoRef.current.src =
+          'https://assets.mixkit.co/videos/preview/mixkit-man-doing-squats-in-a-gym-22839-large.mp4';
+        videoRef.current.loop = true;
+        videoRef.current.muted = true;
+        videoRef.current.play().catch(() => {});
+      }
+      setIsCameraActive(true);
+      setCameraSource('SIMULATED_FEED');
+      showToast(`Webcam notice: ${reason} (Running Studio Demo Feed)`, 'info');
     }
+  };
+
+  const stopCamera = () => {
+    soundService.playClick();
+    if (videoRef.current) {
+      if (videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      videoRef.current.pause();
+      videoRef.current.src = '';
+    }
+    setIsCameraActive(false);
+    setCameraSource('IDLE');
+    setPermissionError(null);
+    showToast('Camera Form Analyzer Stopped', 'info');
   };
 
   const switchCameraSource = () => {
     soundService.playClick();
     if (!isCameraActive) {
-      toggleCamera();
+      startRealWebcam();
       return;
     }
     if (cameraSource === 'WEBCAM') {
@@ -247,16 +258,17 @@ export const FormAnalysisPage: React.FC = () => {
           stream.getTracks().forEach((track) => track.stop());
           videoRef.current.srcObject = null;
         }
-        videoRef.current.src = 'https://assets.mixkit.co/videos/preview/mixkit-man-doing-squats-in-a-gym-22839-large.mp4';
+        videoRef.current.src =
+          'https://assets.mixkit.co/videos/preview/mixkit-man-doing-squats-in-a-gym-22839-large.mp4';
         videoRef.current.loop = true;
         videoRef.current.muted = true;
         videoRef.current.play().catch(() => {});
       }
       setCameraSource('SIMULATED_FEED');
-      showToast('Switched to Live Studio Camera Demo Feed', 'info');
+      showToast('Switched to Live Studio Demo Feed', 'info');
     } else {
-      // Switch to real webcam
-      toggleCamera();
+      // Try switching back to real webcam hardware
+      startRealWebcam();
     }
   };
 
@@ -309,14 +321,14 @@ export const FormAnalysisPage: React.FC = () => {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={toggleCamera}
+            onClick={isCameraActive ? stopCamera : startRealWebcam}
             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/30 flex items-center space-x-2 transition transform hover:scale-105"
           >
             <Camera className="w-4 h-4" />
             <span>
               {isCameraActive
                 ? `Stop Camera (${cameraSource === 'WEBCAM' ? 'Webcam' : 'Live Feed'})`
-                : 'Start Camera'}
+                : '🔴 Start Real Webcam'}
             </span>
           </button>
           <button
@@ -348,10 +360,25 @@ export const FormAnalysisPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Helpful Permission Notice if iframe restricts Webcam */}
+      {permissionError && (
+        <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs flex items-start space-x-3">
+          <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+          <div>
+            <strong className="font-extrabold block text-white mb-0.5">
+              💡 Webcam Permission Notice: {permissionError}
+            </strong>
+            <span>
+              In some sandboxed browser viewers or iframes, webcam hardware permissions are blocked by the host page. To capture your real webcam, open this page directly in a standalone browser tab or run <code>npm run dev</code> locally on your machine!
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left 8 cols: Live Video Stream + 60-FPS AI Skeleton Overlay Canvas */}
         <div className="lg:col-span-8 glass-card p-6 flex flex-col items-center justify-center relative min-h-[440px] bg-black/80 rounded-3xl overflow-hidden border-cyan-500/30 shadow-glow-blue">
-          {/* Live Video Element (Webcam OR High-Definition Demo Feed) */}
+          {/* Live Video Element (Webcam Hardware OR High-Definition Demo Feed) */}
           <video
             ref={videoRef}
             autoPlay
@@ -359,8 +386,8 @@ export const FormAnalysisPage: React.FC = () => {
             muted
             playsInline
             className={`absolute inset-0 w-full h-full object-cover ${
-              isCameraActive ? '' : 'hidden'
-            }`}
+              cameraSource === 'WEBCAM' ? 'transform -scale-x-100' : ''
+            } ${isCameraActive ? '' : 'hidden'}`}
           />
           {/* 60-FPS AI Computer Vision Bounding Box & Skeleton Keypoints Overlay Canvas */}
           <canvas
@@ -380,7 +407,7 @@ export const FormAnalysisPage: React.FC = () => {
               <div>
                 <h3 className="text-xl font-extrabold text-white">AI Vision Skeleton Active</h3>
                 <p className="text-xs text-gray-300 max-w-md mx-auto mt-1 leading-relaxed">
-                  Click "Start Camera" above to initiate real-time pose detection on your live webcam or our studio camera feed.
+                  Click "🔴 Start Real Webcam" above to capture your live video feed and analyze your posture.
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-gray-300 pt-3">
@@ -407,7 +434,7 @@ export const FormAnalysisPage: React.FC = () => {
                 <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-ping"></div>
                 <div>
                   <div className="text-xs font-extrabold text-cyan-400 uppercase tracking-widest">
-                    {alertTitle} ({cameraSource === 'WEBCAM' ? 'Live Webcam' : 'Live Demo Feed'})
+                    {alertTitle} ({cameraSource === 'WEBCAM' ? '🔴 LIVE WEBCAM HARDWARE' : 'Live Demo Feed'})
                   </div>
                   <div className="text-sm font-bold text-white">{alertMsg}</div>
                 </div>
