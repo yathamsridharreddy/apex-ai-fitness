@@ -1,9 +1,8 @@
-// APEX AI FITNESS — PRO (Guaranteed 100% Visible Real Human Exercise Demonstration Engine)
-// Renders ultra-smooth 60-FPS realistic human anatomical demonstration motion on Canvas (zero external CDN video bugs),
-// with glowing muscle contraction overlays, live rep counting, and 0.5x slow-motion speed control.
+// APEX AI FITNESS — PRO (Unified 60-FPS Real Human Anatomical Demonstration Engine)
+// Apple-minimal, zero-clutter 60-FPS studio-lit human biomechanical demonstration on Canvas.
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Activity, Eye, Video, Zap } from 'lucide-react';
+import { Play, Pause, RotateCcw, Activity } from 'lucide-react';
 import { soundService } from '../services/soundService';
 
 interface RealHumanMotionProps {
@@ -24,15 +23,13 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
   motionType = 'squat'
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [speed, setSpeed] = useState<number>(1.0); // 1.0x normal, 0.5x slow-mo
+  const [speed, setSpeed] = useState<number>(1.0);
   const [currentRep, setCurrentRep] = useState<number>(1);
   const [phase, setPhase] = useState<'ECCENTRIC' | 'ISOMETRIC' | 'CONCENTRIC'>('ECCENTRIC');
-  const [progress, setProgress] = useState<number>(0); // 0 to 100 within current rep
-  const [viewMode, setViewMode] = useState<'DEMO_MOTION' | 'PHOTO_GUIDE'>('DEMO_MOTION');
+  const [progress, setProgress] = useState<number>(0);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Live Rep Counter and Exercise Cadence Loop
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -75,7 +72,6 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
     setPhase('ECCENTRIC');
   };
 
-  // Calculate normalized depth (0 = standing/lockout, 1 = full parallel/bottom depth)
   const getDepthFactor = () => {
     if (!isPlaying) return 0;
     if (progress < 48) {
@@ -90,12 +86,10 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
 
   const depth = getDepthFactor();
 
-  // Biomechanical Joint Angles
-  const kneeAngleDeg = Math.round(180 - depth * 92); // 180° down to 88° parallel
-  const hipAngleDeg = Math.round(180 - depth * 75); // 180° down to 105°
-  const elbowAngleDeg = Math.round(180 - depth * 105); // 180° down to 75°
+  const kneeAngleDeg = Math.round(180 - depth * 92);
+  const hipAngleDeg = Math.round(180 - depth * 75);
+  const elbowAngleDeg = Math.round(180 - depth * 105);
 
-  // 60-FPS REALISTIC HUMAN EXERCISE DEMONSTRATION ENGINE ON CANVAS
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -106,23 +100,23 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
     const height = canvas.height;
     ctx.clearRect(0, 0, width, height);
 
-    // Rich studio background with depth lighting
+    // Studio lighting background
     const bgGrad = ctx.createRadialGradient(
       width * 0.5,
       height * 0.5,
-      50,
+      40,
       width * 0.5,
       height * 0.5,
       400
     );
-    bgGrad.addColorStop(0, '#151C2C');
-    bgGrad.addColorStop(0.7, '#0B0F19');
+    bgGrad.addColorStop(0, '#131A28');
+    bgGrad.addColorStop(0.7, '#0B0F18');
     bgGrad.addColorStop(1, '#05070D');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, width, height);
 
-    // Studio grid & floor line
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    // Studio background grid
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
     ctx.lineWidth = 1;
     for (let i = 0; i < width; i += 40) {
       ctx.beginPath();
@@ -137,47 +131,34 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.stroke();
     }
 
-    // Ground Floor & Realistic Contact Shadow
+    // Ground line
     const floorY = height * 0.82;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(40, floorY);
     ctx.lineTo(width - 40, floorY);
     ctx.stroke();
-
-    ctx.strokeStyle = '#30D158';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([6, 6]);
-    ctx.beginPath();
-    ctx.moveTo(40, floorY);
-    ctx.lineTo(width - 40, floorY);
-    ctx.stroke();
-    ctx.setLineDash([]);
 
     if (motionType === 'pushup' || motionType === 'pike') {
-      // REALISTIC HUMAN FLOOR PUSH-UP DEMONSTRATION (Planted hands/toes, bending elbows, lowering chest)
-      const ankleX = 100;
-      const ankleY = floorY;
-      const handX = 480;
-      const handY = floorY;
-
-      // Chest lowers toward floor as elbow bends
-      const hipX = 230;
+      // PUSH-UP ANATOMICAL ARTICULATION
+      const ankleX = 110;
+      const handX = 470;
+      const hipX = 235;
       const hipY = 220 + depth * 35;
-      const shoulderX = 420;
+      const shoulderX = 410;
       const shoulderY = 175 + depth * 65;
-      const elbowX = 460 - depth * 35;
+      const elbowX = 455 - depth * 35;
       const elbowY = 220 + depth * 30;
 
-      // Contact shadow under hands & feet
+      // Ground shadows
       ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       ctx.beginPath();
       ctx.ellipse(ankleX, floorY, 25, 8, 0, 0, Math.PI * 2);
       ctx.ellipse(handX, floorY, 30, 8, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Pectorals & Anterior Deltoids Dynamic Contraction Glow
+      // Pec & Delt Contraction Glow
       const pecX = (shoulderX + elbowX) / 2 - 20;
       const pecY = shoulderY + 15;
       const glowGrad = ctx.createRadialGradient(pecX, pecY, 5, pecX, pecY, 70);
@@ -189,48 +170,43 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.ellipse(pecX, pecY, 70, 35, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Human Body Anatomy Rendering (Shaded Limbs & Torso)
-      // Legs (Ankle to Hip)
-      ctx.strokeStyle = '#A8B4C8';
+      // Shaded anatomical limbs
+      ctx.strokeStyle = '#94A3B8';
       ctx.lineWidth = 26;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(ankleX, ankleY);
+      ctx.moveTo(ankleX, floorY);
       ctx.lineTo(hipX, hipY);
       ctx.stroke();
 
-      // Torso & Athletic Chest (Hip to Shoulder)
-      ctx.strokeStyle = '#C4D0E4';
+      ctx.strokeStyle = '#CBD5E1';
       ctx.lineWidth = 34;
       ctx.beginPath();
       ctx.moveTo(hipX, hipY);
       ctx.lineTo(shoulderX, shoulderY);
       ctx.stroke();
 
-      // Arm Articulation (Shoulder -> Elbow -> Planted Hand)
       ctx.strokeStyle = '#0A84FF';
       ctx.lineWidth = 20;
       ctx.beginPath();
       ctx.moveTo(shoulderX, shoulderY);
       ctx.lineTo(elbowX, elbowY);
-      ctx.lineTo(handX, handY);
+      ctx.lineTo(handX, floorY);
       ctx.stroke();
 
-      // Anatomical Head & Neck
-      const headX = shoulderX + 35;
-      const headY = shoulderY - 12;
-      ctx.fillStyle = '#E2E8F0';
+      // Head
+      ctx.fillStyle = '#F1F5F9';
       ctx.beginPath();
-      ctx.arc(headX, headY, 22, 0, Math.PI * 2);
+      ctx.arc(shoulderX + 35, shoulderY - 12, 22, 0, Math.PI * 2);
       ctx.fill();
 
-      // Articulated Joint Highlights
+      // Joint pivot
       ctx.fillStyle = '#FF453A';
       ctx.beginPath();
-      ctx.arc(elbowX, elbowY, 10, 0, Math.PI * 2);
+      ctx.arc(elbowX, elbowY, 9, 0, Math.PI * 2);
       ctx.fill();
 
-      // Live Telemetry Callouts
+      // Telemetry
       ctx.fillStyle = '#FF453A';
       ctx.font = 'bold 15px monospace';
       ctx.fillText(`${elbowAngleDeg}° Elbow`, elbowX - 45, elbowY - 20);
@@ -239,19 +215,15 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.font = 'bold 14px sans-serif';
       ctx.fillText(`Pectorals Active (${Math.round(depth * 100)}%)`, shoulderX - 120, shoulderY - 30);
     } else {
-      // REALISTIC HUMAN SQUAT / JUMP SQUAT / SPLIT SQUAT DEMONSTRATION
-      // Feet planted at (320, floorY)
-      // Hips lower from standing (320, 150) down to parallel squat depth (290, 225)
-      // Knees travel forward over toes from (320, 215) to (365, 220)
-      // Torso hinges forward slightly with a neutral spine
+      // SQUAT / SPLIT SQUAT / ROW ARTICULATION
       const footX = 320;
       const footY = floorY;
-      const kneeX = 320 + depth * 48; // knee bends forward over toes
-      const kneeY = 220; // knee height stable
-      const hipX = 320 - depth * 45; // hips hinge back and lower
-      const hipY = 130 + depth * 85; // hips descend to parallel (215)
-      const shoulderX = 320 + depth * 15; // torso leans forward slightly
-      const shoulderY = 35 + depth * 85; // shoulders lower with torso
+      const kneeX = 320 + depth * 48;
+      const kneeY = 220;
+      const hipX = 320 - depth * 45;
+      const hipY = 130 + depth * 85;
+      const shoulderX = 320 + depth * 15;
+      const shoulderY = 35 + depth * 85;
       const headX = shoulderX + 5;
       const headY = shoulderY - 28;
 
@@ -261,7 +233,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.ellipse(footX, floorY, 45 + depth * 15, 10, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Quadriceps & Glutes Dynamic Contraction Glow Aura
+      // Quads & Glutes Dynamic Contraction Glow
       const quadX = (hipX + kneeX) / 2;
       const quadY = (hipY + kneeY) / 2;
       const glowGrad = ctx.createRadialGradient(quadX, quadY, 5, quadX, quadY, 85);
@@ -273,8 +245,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.ellipse(quadX, quadY, 85, 45, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Human Anatomical Figure Rendering (Realistic Shaded Limbs)
-      // Lower Leg (Ankle to Knee - Gastrocnemius / Shin)
+      // Lower leg
       ctx.strokeStyle = '#94A3B8';
       ctx.lineWidth = 26;
       ctx.lineCap = 'round';
@@ -283,7 +254,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.lineTo(kneeX, kneeY);
       ctx.stroke();
 
-      // Thigh (Knee to Hip - Quadriceps / Hamstrings)
+      // Thigh
       ctx.strokeStyle = '#0A84FF';
       ctx.lineWidth = 32;
       ctx.beginPath();
@@ -291,7 +262,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.lineTo(hipX, hipY);
       ctx.stroke();
 
-      // Torso & Back (Hip to Shoulder - Erector Spinae / Core)
+      // Torso
       ctx.strokeStyle = '#CBD5E1';
       ctx.lineWidth = 34;
       ctx.beginPath();
@@ -299,7 +270,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.lineTo(shoulderX, shoulderY);
       ctx.stroke();
 
-      // Athletic Arms counterbalancing forward
+      // Arms counterbalancing
       const handX = shoulderX + 50 - depth * 10;
       const handY = shoulderY + 40;
       ctx.strokeStyle = '#94A3B8';
@@ -309,13 +280,13 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.lineTo(handX, handY);
       ctx.stroke();
 
-      // Anatomical Head & Neck
+      // Head
       ctx.fillStyle = '#F1F5F9';
       ctx.beginPath();
       ctx.arc(headX, headY, 23, 0, Math.PI * 2);
       ctx.fill();
 
-      // Joint Pivot Accents
+      // Joint pivots
       ctx.fillStyle = '#30D158';
       ctx.beginPath();
       ctx.arc(footX, footY, 7, 0, Math.PI * 2);
@@ -327,7 +298,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.arc(hipX, hipY, 9, 0, Math.PI * 2);
       ctx.fill();
 
-      // Parallel Squat Depth Reference Target Line (90°)
+      // Parallel Reference Line (90°)
       const parallelY = 215;
       ctx.strokeStyle = 'rgba(48, 209, 88, 0.6)';
       ctx.lineWidth = 2;
@@ -342,7 +313,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.font = 'bold 12px sans-serif';
       ctx.fillText('Parallel Target Line (90° Depth)', 130, parallelY - 8);
 
-      // Real-Time Knee & Hip Joint Angle Telemetry
+      // Telemetry Callouts
       ctx.fillStyle = '#0A84FF';
       ctx.font = 'bold 16px monospace';
       ctx.fillText(`${kneeAngleDeg}° Knee`, kneeX + 15, kneeY - 5);
@@ -355,23 +326,23 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
       ctx.font = 'bold 14px sans-serif';
       ctx.fillText(`Quadriceps & Glutes Active (${Math.round(depth * 100)}%)`, 200, 40);
     }
-  }, [progress, depth, motionType, speed]);
+  }, [progress, depth, motionType]);
 
   const getPhaseStyle = () => {
     if (phase === 'ECCENTRIC') {
       return {
-        label: '⬇️ LOWERING (Eccentric 2s)',
+        label: '⬇️ LOWERING (Eccentric)',
         color: 'bg-orange-500/85 text-white border-orange-400'
       };
     }
     if (phase === 'ISOMETRIC') {
       return {
-        label: '⏸️ BOTTOM HOLD (Parallel 1s)',
+        label: '⏸️ BOTTOM HOLD (Parallel)',
         color: 'bg-emerald-500/85 text-white border-emerald-400'
       };
     }
     return {
-      label: '⬆️ EXPLODING UP (Concentric 1s)',
+      label: '⬆️ EXPLODING UP (Concentric)',
       color: 'bg-blue-600/85 text-white border-blue-400'
     };
   };
@@ -380,21 +351,16 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
 
   return (
     <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-[#0A0D14] border border-white/15 flex flex-col justify-between select-none shadow-xl">
-      {/* 60-FPS Guaranteed Visible Real Human Biomechanical Demonstration Canvas OR 3D Photo Reference */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        {viewMode === 'DEMO_MOTION' ? (
-          <canvas
-            ref={canvasRef}
-            width={640}
-            height={360}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <img src={image} alt={name} className="w-full h-full object-cover opacity-90" />
-        )}
-        {/* Ambient Dark Gradient Overlay for UI Readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/60 pointer-events-none" />
-      </div>
+      {/* 60-FPS Studio-Lit Biomechanical Human Demonstration Canvas */}
+      <canvas
+        ref={canvasRef}
+        width={640}
+        height={360}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Ambient Dark Gradient Overlay for UI Readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/60 pointer-events-none" />
 
       {/* Top Bar: Muscle Badge & Animated Cadence Phase Pill */}
       <div className="relative z-10 p-3.5 flex items-center justify-between gap-2">
@@ -403,42 +369,18 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
           <span>3D Muscle: {primaryMuscle} • 60 FPS Human Demo</span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* Toggle between Real Human Motion Demonstration and 3D Photo Reference */}
-          <button
-            onClick={() => {
-              soundService.playClick();
-              setViewMode((m) => (m === 'DEMO_MOTION' ? 'PHOTO_GUIDE' : 'DEMO_MOTION'));
-            }}
-            className="px-3 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-extrabold text-white border border-white/15 flex items-center space-x-1.5 transition shadow"
-          >
-            {viewMode === 'DEMO_MOTION' ? (
-              <>
-                <Eye className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Show 3D Photo Guide</span>
-              </>
-            ) : (
-              <>
-                <Video className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Show 60-FPS Human Demo</span>
-              </>
-            )}
-          </button>
-
-          <div
-            className={`px-3 py-1 rounded-xl backdrop-blur-md border text-xs font-extrabold transition-colors shadow ${phaseStyle.color}`}
-          >
-            {phaseStyle.label}
-          </div>
+        <div
+          className={`px-3 py-1 rounded-xl backdrop-blur-md border text-xs font-extrabold transition-colors shadow ${phaseStyle.color}`}
+        >
+          {phaseStyle.label}
         </div>
       </div>
 
-      {/* Bottom Bar: Live Rep Counter Gauge & Video Speed Controls */}
+      {/* Bottom Bar: Live Rep Counter Gauge & Speed Controls */}
       <div className="relative z-10 p-3.5 flex items-center justify-between gap-2 bg-black/75 backdrop-blur-md border-t border-white/15">
         {/* Live Animated Rep Counter */}
         <div className="flex items-center space-x-3">
           <div className="relative w-10 h-10 flex items-center justify-center">
-            {/* Circular Progress Ring */}
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
               <path
                 className="text-white/10"
@@ -471,7 +413,7 @@ export const RealHumanMotionVisualizer: React.FC<RealHumanMotionProps> = ({
           </div>
         </div>
 
-        {/* Speed Controls */}
+        {/* Essential Pace Controls (No Clutter) */}
         <div className="flex items-center space-x-1.5">
           <button
             onClick={() => {

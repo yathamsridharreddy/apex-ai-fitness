@@ -17,6 +17,17 @@ export const LiveWorkoutPage: React.FC = () => {
   const [workoutTimeSec, setWorkoutTimeSec] = useState<number>(142);
   const [currentSlug, setCurrentSlug] = useState<string>('bodyweight-jump-squat');
 
+  const exerciseOrder = [
+    'bodyweight-jump-squat',
+    'strict-push-up',
+    'bulgarian-split-squat-home',
+    'pike-push-up-home',
+    'doorframe-towel-row',
+    'barbell-back-squat',
+    'barbell-bench-press',
+    'conventional-deadlift'
+  ];
+
   useEffect(() => {
     const timer = setInterval(() => {
       setWorkoutTimeSec((prev) => prev + 1);
@@ -101,6 +112,28 @@ export const LiveWorkoutPage: React.FC = () => {
       motionType: 'split_squat',
       reps: 12
     },
+    'pike-push-up-home': {
+      name: 'Bodyweight Pike Shoulder Push-Up',
+      primary: 'Anterior Deltoid',
+      secondary: 'Upper Trapezius, Triceps Brachii',
+      image: 'images/exercise_pike_pushup.jpg',
+      tempo: '2-1-1-0 (Controlled Descent)',
+      breath: 'Inhale Down / Exhale Up',
+      equip: '100% Without Gym Equipment (Home Floor)',
+      motionType: 'pike',
+      reps: 12
+    },
+    'doorframe-towel-row': {
+      name: 'Doorframe / Table Inverted Row',
+      primary: 'Latissimus Dorsi',
+      secondary: 'Rhomboids, Biceps Brachii, Rear Delts',
+      image: 'images/exercise_doorframe_row.jpg',
+      tempo: '2-1-1-0 (1s Scapular Squeeze)',
+      breath: 'Exhale Pull / Inhale Release',
+      equip: '100% Without Gym Equipment (Home Doorframe)',
+      motionType: 'row',
+      reps: 15
+    },
     'barbell-back-squat': {
       name: 'Barbell Back Squat',
       primary: 'Quadriceps',
@@ -137,6 +170,16 @@ export const LiveWorkoutPage: React.FC = () => {
   };
 
   const info = EX_INFO[currentSlug] || EX_INFO['bodyweight-jump-squat'];
+
+  const advanceExercise = () => {
+    soundService.playSuccess();
+    const currentIdx = exerciseOrder.indexOf(currentSlug);
+    const nextIdx = (currentIdx + 1) % exerciseOrder.length;
+    const nextSlug = exerciseOrder[nextIdx];
+    setCurrentSlug(nextSlug);
+    const nextInfo = EX_INFO[nextSlug];
+    alert(`Switched to Next Exercise: ${nextInfo.name}! (${nextInfo.equip})`);
+  };
 
   return (
     <div className="space-y-6">
@@ -187,6 +230,12 @@ export const LiveWorkoutPage: React.FC = () => {
                 <option value="bulgarian-split-squat-home" className="bg-gray-900">
                   Chair Bulgarian Split Squat (0% Gym)
                 </option>
+                <option value="pike-push-up-home" className="bg-gray-900">
+                  Bodyweight Pike Shoulder Push-Up (0% Gym)
+                </option>
+                <option value="doorframe-towel-row" className="bg-gray-900">
+                  Doorframe / Table Inverted Row (0% Gym)
+                </option>
               </optgroup>
               <optgroup label="🏋️ Gym Equipment Required">
                 <option value="barbell-back-squat" className="bg-gray-900">
@@ -233,7 +282,7 @@ export const LiveWorkoutPage: React.FC = () => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 7 cols: Real Human Biomechanical Motion Engine */}
+        {/* Left 7 cols: Unified Apple-minimal 60-FPS Real Human Biomechanical Demonstration */}
         <div className="lg:col-span-7 glass-card p-6 flex flex-col justify-between space-y-4">
           
           <RealHumanMotionVisualizer
@@ -342,7 +391,7 @@ export const LiveWorkoutPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Controls */}
+          {/* Clean Functional Controls */}
           <div className="flex items-center space-x-2.5 pt-3 border-t border-white/10">
             <button
               onClick={addLiveSet}
@@ -352,11 +401,7 @@ export const LiveWorkoutPage: React.FC = () => {
               <span>Add Set</span>
             </button>
             <button
-              onClick={() => {
-                soundService.playSuccess();
-                setCurrentSlug('strict-push-up');
-                alert('Advancing to next exercise: Strict Anatomical Floor Push-Up (100% Without Gym Equipment)!');
-              }}
+              onClick={advanceExercise}
               className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-extrabold text-white transition flex items-center justify-center space-x-1.5 shadow-lg shadow-blue-500/30"
             >
               <span>Next Exercise</span>
