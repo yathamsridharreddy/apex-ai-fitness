@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFitnessStore } from '../../store/useFitnessStore';
 import { soundService } from '../../services/soundService';
-import { ExerciseMotionVisualizer } from '../ExerciseMotionVisualizer';
+import { RealHumanMotionVisualizer } from '../RealHumanMotionVisualizer';
 
 export const ExerciseDetailModal: React.FC = () => {
   const { selectedExerciseModal, closeExerciseModal } = useFitnessStore();
@@ -42,8 +42,8 @@ export const ExerciseDetailModal: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
-            {/* Animated Human Biomechanical Motion Visualizer */}
-            <ExerciseMotionVisualizer
+            {/* True Biomechanical Articulated Human Motion Engine */}
+            <RealHumanMotionVisualizer
               image={ex.image}
               name={ex.name}
               primaryMuscle={ex.primaryMuscle}

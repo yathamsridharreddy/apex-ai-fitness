@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFitnessStore } from '../store/useFitnessStore';
 import { soundService } from '../services/soundService';
 import { Plus, ArrowRight, Droplets } from 'lucide-react';
-import { ExerciseMotionVisualizer } from '../components/ExerciseMotionVisualizer';
+import { RealHumanMotionVisualizer } from '../components/RealHumanMotionVisualizer';
 
 export const LiveWorkoutPage: React.FC = () => {
   const {
@@ -233,10 +233,10 @@ export const LiveWorkoutPage: React.FC = () => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 7 cols: Moving Human Anatomical Motion & Rep Counter Engine */}
+        {/* Left 7 cols: Real Human Biomechanical Motion Engine */}
         <div className="lg:col-span-7 glass-card p-6 flex flex-col justify-between space-y-4">
           
-          <ExerciseMotionVisualizer
+          <RealHumanMotionVisualizer
             image={info.image}
             name={info.name}
             primaryMuscle={info.primary}
