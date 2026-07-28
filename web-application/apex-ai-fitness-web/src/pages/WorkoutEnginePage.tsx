@@ -15,11 +15,11 @@ export const WorkoutEnginePage: React.FC = () => {
   const EXERCISE_DB: ExerciseItem[] = [
     {
       slug: 'bodyweight-jump-squat',
-      name: 'Explosive Bodyweight Jump Squat (No Gym)',
+      name: 'Explosive Bodyweight Jump Squat',
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings, Calves',
-      equipment: 'Bodyweight / No Gym',
+      equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Beginner',
       calories: 12.5,
       image: 'images/exercise_barbell_squat.jpg',
@@ -36,17 +36,17 @@ export const WorkoutEnginePage: React.FC = () => {
       ],
       tempo: '2-0-X-0 (Explosive Jump)',
       breathing: 'Inhale on controlled descent; exhale explosively on the jump.',
-      homeVersion: 'Bodyweight Jump Squat (Primary Home)',
+      homeVersion: 'Bodyweight Jump Squat (Primary No Gym)',
       machineVersion: 'Leg Press Machine',
       dumbbellVersion: 'Dumbbell Goblet Squat'
     },
     {
       slug: 'strict-push-up',
-      name: 'Strict Anatomical Floor Push-Up (No Gym)',
+      name: 'Strict Anatomical Floor Push-Up',
       category: 'Chest',
       primaryMuscle: 'Pectoralis Major',
       secondaryMuscles: 'Anterior Deltoid, Triceps Brachii',
-      equipment: 'Bodyweight / No Gym',
+      equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Beginner',
       calories: 9.8,
       image: 'images/exercise_bench_press.jpg',
@@ -63,22 +63,22 @@ export const WorkoutEnginePage: React.FC = () => {
       ],
       tempo: '2-1-1-0 (1s Floor Pause)',
       breathing: 'Inhale while lowering chest; exhale forcefully while pressing up.',
-      homeVersion: 'Strict Anatomical Floor Push-Up (Primary Home)',
+      homeVersion: 'Strict Anatomical Floor Push-Up (Primary No Gym)',
       machineVersion: 'Seated Chest Press Machine',
       dumbbellVersion: 'Flat Dumbbell Bench Press'
     },
     {
       slug: 'bulgarian-split-squat-home',
-      name: 'Home Bulgarian Split Squat (Chair Elevated)',
+      name: 'Chair Bulgarian Split Squat',
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings',
-      equipment: 'Bodyweight / Chair',
+      equipment: '100% Without Gym Equipment (Home Chair)',
       difficulty: 'Intermediate',
       calories: 11.0,
       image: 'images/exercise_barbell_squat.jpg',
       instructions: [
-        'Elevate rear foot on a sturdy home chair or sofa behind you.',
+        'Elevate rear foot on a sturdy household chair or sofa behind you.',
         'Hop front foot forward so shin remains relatively vertical at the bottom.',
         'Lower rear knee toward floor until front thigh breaks parallel.',
         'Drive through front heel to return to standing position.'
@@ -90,17 +90,17 @@ export const WorkoutEnginePage: React.FC = () => {
       ],
       tempo: '3-1-1-0 (3s Negative)',
       breathing: 'Inhale down; exhale as you drive up.',
-      homeVersion: 'Chair Bulgarian Split Squat (Primary Home)',
+      homeVersion: 'Chair Bulgarian Split Squat (Primary No Gym)',
       machineVersion: 'Leg Press Machine Single-Leg',
       dumbbellVersion: 'Dumbbell Bulgarian Split Squat'
     },
     {
       slug: 'pike-push-up-home',
-      name: 'Bodyweight Pike Shoulder Push-Up (No Gym)',
+      name: 'Bodyweight Pike Shoulder Push-Up',
       category: 'Shoulders',
       primaryMuscle: 'Anterior Deltoid',
       secondaryMuscles: 'Upper Trapezius, Triceps Brachii',
-      equipment: 'Bodyweight / No Gym',
+      equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Intermediate',
       calories: 9.2,
       image: 'images/exercise_bench_press.jpg',
@@ -112,22 +112,22 @@ export const WorkoutEnginePage: React.FC = () => {
       mistakes: ['Flaring elbows wide', 'Dropping hips flat into a standard push-up'],
       tempo: '2-1-1-0 (Controlled Descent)',
       breathing: 'Inhale as head lowers; exhale as shoulders press overhead.',
-      homeVersion: 'Bodyweight Pike Push-Up (Primary Home)',
+      homeVersion: 'Bodyweight Pike Push-Up (Primary No Gym)',
       machineVersion: 'Seated Shoulder Press Machine',
       dumbbellVersion: 'Seated Dumbbell Shoulder Press'
     },
     {
       slug: 'doorframe-towel-row',
-      name: 'Doorframe / Table Inverted Row (No Gym)',
+      name: 'Doorframe / Table Inverted Row',
       category: 'Back',
       primaryMuscle: 'Latissimus Dorsi',
       secondaryMuscles: 'Rhomboids, Biceps Brachii, Rear Delts',
-      equipment: 'Household / Doorframe',
+      equipment: '100% Without Gym Equipment (Home Doorframe)',
       difficulty: 'Beginner',
       calories: 9.0,
       image: 'images/exercise_deadlift.jpg',
       instructions: [
-        'Grip both sides of a sturdy doorframe or use a towel looped around a secure door handle.',
+        'Grip both sides of a sturdy household doorframe or use a towel looped around a secure door handle.',
         'Lean torso back with heels planted on floor and core braced.',
         'Pull chest toward doorframe by driving elbows backward and squeezing scapulae together.',
         'Extend arms under control back to full stretch.'
@@ -135,7 +135,7 @@ export const WorkoutEnginePage: React.FC = () => {
       mistakes: ['Shrugging shoulders toward ears', 'Using momentum from hips'],
       tempo: '2-1-1-0 (1s Scapular Squeeze)',
       breathing: 'Exhale while pulling chest up; inhale on controlled release.',
-      homeVersion: 'Doorframe Towel Row (Primary Home)',
+      homeVersion: 'Doorframe Towel Row (Primary No Gym)',
       machineVersion: 'Lat Pulldown / Seated Cable Row',
       dumbbellVersion: 'Dumbbell Bent-Over Row'
     },
@@ -145,7 +145,7 @@ export const WorkoutEnginePage: React.FC = () => {
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings',
-      equipment: 'Barbell Rack',
+      equipment: 'Barbell Rack (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 11.2,
       image: 'images/exercise_barbell_squat.jpg',
@@ -173,7 +173,7 @@ export const WorkoutEnginePage: React.FC = () => {
       category: 'Chest',
       primaryMuscle: 'Pectoralis Major',
       secondaryMuscles: 'Anterior Deltoid, Triceps Brachii',
-      equipment: 'Barbell Bench',
+      equipment: 'Barbell Bench (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 9.5,
       image: 'images/exercise_bench_press.jpg',
@@ -201,7 +201,7 @@ export const WorkoutEnginePage: React.FC = () => {
       category: 'Back',
       primaryMuscle: 'Erector Spinae',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings, Latissimus Dorsi',
-      equipment: 'Barbell & Plates',
+      equipment: 'Barbell & Plates (Gym Equipment Required)',
       difficulty: 'Advanced',
       calories: 12.8,
       image: 'images/exercise_deadlift.jpg',
@@ -231,7 +231,7 @@ export const WorkoutEnginePage: React.FC = () => {
     list = EXERCISE_DB.filter((e) => ['Chest', 'Back', 'Shoulders'].includes(e.category));
   }
   if (selectedWorkoutType === 'HOME_WORKOUT' || selectedWorkoutType === 'CALISTHENICS') {
-    list = EXERCISE_DB.filter((e) => e.equipment.includes('No Gym') || e.equipment.includes('Chair') || e.equipment.includes('Household'));
+    list = EXERCISE_DB.filter((e) => e.equipment.includes('Without Gym Equipment'));
   }
 
   return (
@@ -252,7 +252,7 @@ export const WorkoutEnginePage: React.FC = () => {
             className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white text-xs font-extrabold shadow-lg flex items-center space-x-1.5 transition"
           >
             <Home className="w-4 h-4" />
-            <span>Switch to No-Gym Home Workout</span>
+            <span>Switch to 100% Zero-Gym Mode</span>
           </button>
           <span className="text-xs text-gray-400 font-semibold">Select Protocol:</span>
           <select
@@ -264,10 +264,10 @@ export const WorkoutEnginePage: React.FC = () => {
               Push Pull Legs (Hypertrophy Focus)
             </option>
             <option value="HOME_WORKOUT" className="bg-gray-900">
-              🏠 Home Workout (No Gym / Bodyweight Only)
+              🏠 Home Workout (100% Without Gym Equipment)
             </option>
             <option value="CALISTHENICS" className="bg-gray-900">
-              🏠 Calisthenics Bodyweight Mastery (No Gym)
+              🏠 Calisthenics Mastery (100% Without Gym Equipment)
             </option>
             <option value="UPPER_LOWER" className="bg-gray-900">
               Upper Lower Split (4-Day)
@@ -324,7 +324,7 @@ export const WorkoutEnginePage: React.FC = () => {
             </h4>
             <p className="text-xs text-gray-300 mt-1 max-w-xl">
               {selectedWorkoutType === 'HOME_WORKOUT' || selectedWorkoutType === 'CALISTHENICS'
-                ? '🏠 No-Gym Bodyweight Protocol Active: Using household chairs, doorframes, and floor mastery for complete muscle stimulation.'
+                ? '🏠 100% Without Gym Equipment Mode: Utilizing pure bodyweight calisthenics, floor mastery, and household chair/doorframe tension.'
                 : 'Progressive Overload Active: Recommending +2.5kg increase on compound movements based on 92% recovery score.'}
             </p>
           </div>
@@ -362,18 +362,18 @@ export const WorkoutEnginePage: React.FC = () => {
               <div>
                 <h4 className="font-extrabold text-base">{ex.name}</h4>
                 <p className="text-xs text-gray-400 font-medium">
-                  Target: {ex.primaryMuscle} • Equipment: <span className="text-cyan-400 font-bold">{ex.equipment}</span>
+                  Target: {ex.primaryMuscle} • Equipment: <span className={ex.equipment.includes('Without Gym') ? 'text-emerald-400 font-bold' : 'text-cyan-400 font-bold'}>{ex.equipment}</span>
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-6 text-xs font-semibold">
               <div className="text-center">
                 <span className="text-gray-400 block">Sets x Reps</span>
-                <span className="text-white font-extrabold">4 x {ex.equipment.includes('No Gym') ? '15-20' : '8-10'}</span>
+                <span className="text-white font-extrabold">4 x {ex.equipment.includes('Without Gym') ? '15-20' : '8-10'}</span>
               </div>
               <div className="text-center">
                 <span className="text-gray-400 block">Target Load</span>
-                <span className="text-cyan-400 font-extrabold">{ex.equipment.includes('No Gym') ? 'Bodyweight' : '82.5 kg (+2.5 kg)'}</span>
+                <span className="text-cyan-400 font-extrabold">{ex.equipment.includes('Without Gym') ? 'Bodyweight Only' : '82.5 kg (+2.5 kg)'}</span>
               </div>
               <div className="text-center">
                 <span className="text-gray-400 block">Rest</span>

@@ -1,4 +1,4 @@
-// APEX AI FITNESS — PRO (Zustand Full-Stack State Store with Home Workouts Without Gym)
+// APEX AI FITNESS — PRO (Zustand Full-Stack State Store with 100% Zero Gym Equipment Workouts)
 
 import { create } from 'zustand';
 import { ExerciseItem, IndianFoodItem, TabId, ThemeMode, UserProfile } from '../types';
@@ -20,6 +20,8 @@ interface FitnessState {
   // Active Workout Live Player
   liveWorkout: {
     exerciseSlug: string;
+    title: string;
+    equipmentNote: string;
     sets: { setNum: number; weight: number; reps: number; isCompleted: boolean }[];
     elapsedSeconds: number;
   };
@@ -105,6 +107,8 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
 
   liveWorkout: {
     exerciseSlug: 'barbell-back-squat',
+    title: 'Barbell Back Squat',
+    equipmentNote: 'Barbell Rack (Gym)',
     sets: [
       { setNum: 1, weight: 80.0, reps: 10, isCompleted: true },
       { setNum: 2, weight: 82.5, reps: 8, isCompleted: false },
@@ -218,6 +222,8 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
       },
       liveWorkout: {
         exerciseSlug: 'bodyweight-jump-squat',
+        title: 'Explosive Bodyweight Jump Squat',
+        equipmentNote: '100% Without Gym Equipment (Home Floor)',
         sets: [
           { setNum: 1, weight: 0.0, reps: 15, isCompleted: true },
           { setNum: 2, weight: 0.0, reps: 15, isCompleted: false },
@@ -227,6 +233,6 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         elapsedSeconds: 0
       }
     });
-    soundService.playVoiceCue('/audio/workout_start.mp3', 'Home workout without gym enabled! No equipment required today. Let\'s begin with explosive bodyweight jump squats.');
+    soundService.playVoiceCue('/audio/workout_start.mp3', 'Home workout without gym equipment enabled! Zero gym equipment required today. Let\'s begin with explosive bodyweight jump squats.');
   }
 }));

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFitnessStore } from '../store/useFitnessStore';
 import { soundService } from '../services/soundService';
-import { PlayCircle, Eye, Volume2, Plus, ArrowRight, Droplets } from 'lucide-react';
+import { PlayCircle, Eye, Volume2, Plus, ArrowRight, Droplets, Home } from 'lucide-react';
 
 export const LiveWorkoutPage: React.FC = () => {
   const {
@@ -14,7 +14,7 @@ export const LiveWorkoutPage: React.FC = () => {
 
   const [restTimeRemain, setRestTimeRemain] = useState<number>(0);
   const [workoutTimeSec, setWorkoutTimeSec] = useState<number>(142);
-  const [currentSlug, setCurrentSlug] = useState<string>('barbell-back-squat');
+  const [currentSlug, setCurrentSlug] = useState<string>('bodyweight-jump-squat');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -53,14 +53,42 @@ export const LiveWorkoutPage: React.FC = () => {
     return `${String(min).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const EX_INFO: Record<string, { name: string; primary: string; secondary: string; image: string; tempo: string; breath: string }> = {
+  const EX_INFO: Record<string, { name: string; primary: string; secondary: string; image: string; tempo: string; breath: string; equip: string }> = {
+    'bodyweight-jump-squat': {
+      name: 'Explosive Bodyweight Jump Squat',
+      primary: 'Quadriceps',
+      secondary: 'Glutes, Hamstrings, Calves',
+      image: 'images/exercise_barbell_squat.jpg',
+      tempo: '2-0-X-0 (Explosive Jump)',
+      breath: 'Inhale Down / Exhale Jump',
+      equip: '100% Without Gym Equipment (Home Floor)'
+    },
+    'strict-push-up': {
+      name: 'Strict Anatomical Floor Push-Up',
+      primary: 'Pectoralis Major',
+      secondary: 'Anterior Deltoids, Triceps',
+      image: 'images/exercise_bench_press.jpg',
+      tempo: '2-1-1-0 (1s Floor Pause)',
+      breath: 'Inhale Down / Exhale Up',
+      equip: '100% Without Gym Equipment (Home Floor)'
+    },
+    'bulgarian-split-squat-home': {
+      name: 'Chair Bulgarian Split Squat',
+      primary: 'Quadriceps',
+      secondary: 'Gluteus Maximus, Hamstrings',
+      image: 'images/exercise_barbell_squat.jpg',
+      tempo: '3-1-1-0 (3s Negative)',
+      breath: 'Inhale Down / Exhale Up',
+      equip: '100% Without Gym Equipment (Home Chair)'
+    },
     'barbell-back-squat': {
       name: 'Barbell Back Squat',
       primary: 'Quadriceps',
       secondary: 'Glutes, Hamstrings',
       image: 'images/exercise_barbell_squat.jpg',
       tempo: '3-1-1-0 (3s Descent)',
-      breath: 'Inhale Down / Exhale Up'
+      breath: 'Inhale Down / Exhale Up',
+      equip: 'Barbell Rack (Gym Equipment)'
     },
     'barbell-bench-press': {
       name: 'Flat Barbell Bench Press',
@@ -68,7 +96,8 @@ export const LiveWorkoutPage: React.FC = () => {
       secondary: 'Anterior Deltoid, Triceps',
       image: 'images/exercise_bench_press.jpg',
       tempo: '2-1-1-0 (2s Lowering)',
-      breath: 'Inhale Down / Exhale Up'
+      breath: 'Inhale Down / Exhale Up',
+      equip: 'Barbell Bench (Gym Equipment)'
     },
     'conventional-deadlift': {
       name: 'Conventional Barbell Deadlift',
@@ -76,11 +105,12 @@ export const LiveWorkoutPage: React.FC = () => {
       secondary: 'Glutes, Hamstrings, Lats',
       image: 'images/exercise_deadlift.jpg',
       tempo: '2-0-1-1 (Dead Stop)',
-      breath: 'Brace Bottom / Exhale Top'
+      breath: 'Brace Bottom / Exhale Top',
+      equip: 'Barbell & Plates (Gym Equipment)'
     }
   };
 
-  const info = EX_INFO[currentSlug] || EX_INFO['barbell-back-squat'];
+  const info = EX_INFO[currentSlug] || EX_INFO['bodyweight-jump-squat'];
 
   return (
     <div className="space-y-6">
@@ -91,17 +121,28 @@ export const LiveWorkoutPage: React.FC = () => {
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
             <span>Live Workout Protocol Active • AI Voice Coach Ready</span>
           </div>
-          <h2 className="text-3xl font-extrabold">{info.name}</h2>
+          <div className="flex items-center space-x-3">
+            <h2 className="text-3xl font-extrabold">{info.name}</h2>
+            {info.equip.includes('Without Gym') ? (
+              <span className="px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-extrabold shadow">
+                🏠 100% ZERO GYM EQUIPMENT
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full bg-blue-600/90 text-white text-xs font-extrabold shadow">
+                🏋️ GYM EQUIPMENT
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-300 mt-1">
             Primary: <span className="text-blue-400 font-bold">{info.primary}</span> • Secondary:{' '}
-            <span className="text-cyan-400 font-bold">{info.secondary}</span>
+            <span className="text-cyan-400 font-bold">{info.secondary}</span> • <span className="text-emerald-400 font-bold">{info.equip}</span>
           </p>
         </div>
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
-            <div className="text-[10px] text-gray-400 font-bold uppercase">Switch Lift</div>
+            <div className="text-[10px] text-gray-400 font-bold uppercase">Switch Exercise</div>
             <select
               value={currentSlug}
               onChange={(e) => {
@@ -110,15 +151,28 @@ export const LiveWorkoutPage: React.FC = () => {
               }}
               className="bg-transparent text-white text-xs font-bold focus:outline-none"
             >
-              <option value="barbell-back-squat" className="bg-gray-900">
-                Barbell Back Squat
-              </option>
-              <option value="barbell-bench-press" className="bg-gray-900">
-                Flat Bench Press
-              </option>
-              <option value="conventional-deadlift" className="bg-gray-900">
-                Conventional Deadlift
-              </option>
+              <optgroup label="🏠 100% Without Gym Equipment (Home)">
+                <option value="bodyweight-jump-squat" className="bg-gray-900">
+                  Explosive Bodyweight Jump Squat (0% Gym)
+                </option>
+                <option value="strict-push-up" className="bg-gray-900">
+                  Strict Anatomical Floor Push-Up (0% Gym)
+                </option>
+                <option value="bulgarian-split-squat-home" className="bg-gray-900">
+                  Chair Bulgarian Split Squat (0% Gym)
+                </option>
+              </optgroup>
+              <optgroup label="🏋️ Gym Equipment Required">
+                <option value="barbell-back-squat" className="bg-gray-900">
+                  Barbell Back Squat
+                </option>
+                <option value="barbell-bench-press" className="bg-gray-900">
+                  Flat Bench Press
+                </option>
+                <option value="conventional-deadlift" className="bg-gray-900">
+                  Conventional Deadlift
+                </option>
+              </optgroup>
             </select>
           </div>
 
@@ -133,7 +187,7 @@ export const LiveWorkoutPage: React.FC = () => {
           {/* Rest Timer Button / Modal */}
           <div
             className="text-center px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/40 cursor-pointer transition hover:bg-orange-500/30"
-            onClick={() => startRestTimer(90)}
+            onClick={() => startRestTimer(60)}
           >
             <div className="text-[10px] text-orange-300 font-bold uppercase">Rest Timer</div>
             <div className="text-lg font-extrabold font-mono text-orange-400">
@@ -189,8 +243,8 @@ export const LiveWorkoutPage: React.FC = () => {
               <div className="text-sm font-extrabold text-cyan-400 mt-0.5">{info.breath}</div>
             </div>
             <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-              <div className="text-xs font-bold text-gray-400">AI Overload Status</div>
-              <div className="text-sm font-extrabold text-emerald-400 mt-0.5">+2.5kg Target PR</div>
+              <div className="text-xs font-bold text-gray-400">Equipment Needed</div>
+              <div className="text-sm font-extrabold text-emerald-400 mt-0.5">{info.equip.includes('Without Gym') ? '0% Gym Equipment' : 'Barbell/Weights'}</div>
             </div>
           </div>
 
@@ -254,7 +308,7 @@ export const LiveWorkoutPage: React.FC = () => {
                   </span>
                   <div>
                     <div className="text-xs font-extrabold text-white">
-                      {s.weight} kg x {s.reps} reps
+                      {s.weight === 0 ? 'Bodyweight' : `${s.weight} kg`} x {s.reps} reps
                     </div>
                     <div className="text-[10px] text-gray-400 font-medium">Target RPE: 8.0</div>
                   </div>
@@ -263,7 +317,7 @@ export const LiveWorkoutPage: React.FC = () => {
                   onClick={() => {
                     toggleCompleteSet(idx);
                     if (!s.isCompleted) {
-                      startRestTimer(90);
+                      startRestTimer(60);
                     }
                   }}
                   className={`px-3.5 py-1.5 rounded-lg ${
@@ -286,7 +340,11 @@ export const LiveWorkoutPage: React.FC = () => {
               <span>Add Set</span>
             </button>
             <button
-              onClick={() => alert('Advancing to next exercise: Flat Barbell Bench Press!')}
+              onClick={() => {
+                soundService.playSuccess();
+                setCurrentSlug('strict-push-up');
+                alert('Advancing to next exercise: Strict Anatomical Floor Push-Up (100% Without Gym Equipment)!');
+              }}
               className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-extrabold text-white transition flex items-center justify-center space-x-1.5 shadow-lg shadow-blue-500/30"
             >
               <span>Next Exercise</span>

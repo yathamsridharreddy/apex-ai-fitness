@@ -7,15 +7,17 @@ export const ExerciseLibraryPage: React.FC = () => {
   const { openExerciseModal, enableHomeWorkoutMode } = useFitnessStore();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('ALL');
+  const [onlyNoGym, setOnlyNoGym] = useState(false);
 
   const EXERCISE_DB: ExerciseItem[] = [
+    // 12 ZERO GYM EQUIPMENT EXERCISES (100% WITHOUT GYM EQUIPMENT)
     {
       slug: 'bodyweight-jump-squat',
-      name: 'Explosive Bodyweight Jump Squat (No Gym)',
+      name: 'Explosive Bodyweight Jump Squat',
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings, Calves',
-      equipment: 'Bodyweight / No Gym',
+      equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Beginner',
       calories: 12.5,
       image: 'images/exercise_barbell_squat.jpg',
@@ -32,17 +34,17 @@ export const ExerciseLibraryPage: React.FC = () => {
       ],
       tempo: '2-0-X-0 (Explosive Jump)',
       breathing: 'Inhale on controlled descent; exhale explosively on the jump.',
-      homeVersion: 'Bodyweight Jump Squat (Primary Home)',
+      homeVersion: 'Bodyweight Jump Squat (Primary No Gym)',
       machineVersion: 'Leg Press Machine',
       dumbbellVersion: 'Dumbbell Goblet Squat'
     },
     {
       slug: 'strict-push-up',
-      name: 'Strict Anatomical Floor Push-Up (No Gym)',
+      name: 'Strict Anatomical Floor Push-Up',
       category: 'Chest',
       primaryMuscle: 'Pectoralis Major',
       secondaryMuscles: 'Anterior Deltoid, Triceps Brachii',
-      equipment: 'Bodyweight / No Gym',
+      equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Beginner',
       calories: 9.8,
       image: 'images/exercise_bench_press.jpg',
@@ -59,22 +61,22 @@ export const ExerciseLibraryPage: React.FC = () => {
       ],
       tempo: '2-1-1-0 (1s Floor Pause)',
       breathing: 'Inhale while lowering chest; exhale forcefully while pressing up.',
-      homeVersion: 'Strict Anatomical Floor Push-Up (Primary Home)',
+      homeVersion: 'Strict Anatomical Floor Push-Up (Primary No Gym)',
       machineVersion: 'Seated Chest Press Machine',
       dumbbellVersion: 'Flat Dumbbell Bench Press'
     },
     {
       slug: 'bulgarian-split-squat-home',
-      name: 'Home Bulgarian Split Squat (Chair Elevated)',
+      name: 'Chair Bulgarian Split Squat',
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings',
-      equipment: 'Bodyweight / Chair',
+      equipment: '100% Without Gym Equipment (Home Chair)',
       difficulty: 'Intermediate',
       calories: 11.0,
       image: 'images/exercise_barbell_squat.jpg',
       instructions: [
-        'Elevate rear foot on a sturdy home chair or sofa behind you.',
+        'Elevate rear foot on a sturdy household chair or sofa behind you.',
         'Hop front foot forward so shin remains relatively vertical at the bottom.',
         'Lower rear knee toward floor until front thigh breaks parallel.',
         'Drive through front heel to return to standing position.'
@@ -86,17 +88,17 @@ export const ExerciseLibraryPage: React.FC = () => {
       ],
       tempo: '3-1-1-0 (3s Negative)',
       breathing: 'Inhale down; exhale as you drive up.',
-      homeVersion: 'Chair Bulgarian Split Squat (Primary Home)',
+      homeVersion: 'Chair Bulgarian Split Squat (Primary No Gym)',
       machineVersion: 'Leg Press Machine Single-Leg',
       dumbbellVersion: 'Dumbbell Bulgarian Split Squat'
     },
     {
       slug: 'pike-push-up-home',
-      name: 'Bodyweight Pike Shoulder Push-Up (No Gym)',
+      name: 'Bodyweight Pike Shoulder Push-Up',
       category: 'Shoulders',
       primaryMuscle: 'Anterior Deltoid',
       secondaryMuscles: 'Upper Trapezius, Triceps Brachii',
-      equipment: 'Bodyweight / No Gym',
+      equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Intermediate',
       calories: 9.2,
       image: 'images/exercise_bench_press.jpg',
@@ -108,22 +110,22 @@ export const ExerciseLibraryPage: React.FC = () => {
       mistakes: ['Flaring elbows wide', 'Dropping hips flat into a standard push-up'],
       tempo: '2-1-1-0 (Controlled Descent)',
       breathing: 'Inhale as head lowers; exhale as shoulders press overhead.',
-      homeVersion: 'Bodyweight Pike Push-Up (Primary Home)',
+      homeVersion: 'Bodyweight Pike Push-Up (Primary No Gym)',
       machineVersion: 'Seated Shoulder Press Machine',
       dumbbellVersion: 'Seated Dumbbell Shoulder Press'
     },
     {
       slug: 'doorframe-towel-row',
-      name: 'Doorframe / Table Inverted Row (No Gym)',
+      name: 'Doorframe / Table Inverted Row',
       category: 'Back',
       primaryMuscle: 'Latissimus Dorsi',
       secondaryMuscles: 'Rhomboids, Biceps Brachii, Rear Delts',
-      equipment: 'Household / Doorframe',
+      equipment: '100% Without Gym Equipment (Home Doorframe)',
       difficulty: 'Beginner',
       calories: 9.0,
       image: 'images/exercise_deadlift.jpg',
       instructions: [
-        'Grip both sides of a sturdy doorframe or use a towel looped around a secure door handle.',
+        'Grip both sides of a sturdy household doorframe or use a towel looped around a secure door handle.',
         'Lean torso back with heels planted on floor and core braced.',
         'Pull chest toward doorframe by driving elbows backward and squeezing scapulae together.',
         'Extend arms under control back to full stretch.'
@@ -131,17 +133,87 @@ export const ExerciseLibraryPage: React.FC = () => {
       mistakes: ['Shrugging shoulders toward ears', 'Using momentum from hips'],
       tempo: '2-1-1-0 (1s Scapular Squeeze)',
       breathing: 'Exhale while pulling chest up; inhale on controlled release.',
-      homeVersion: 'Doorframe Towel Row (Primary Home)',
+      homeVersion: 'Doorframe Towel Row (Primary No Gym)',
       machineVersion: 'Lat Pulldown / Seated Cable Row',
       dumbbellVersion: 'Dumbbell Bent-Over Row'
     },
+    {
+      slug: 'plank-shoulder-tap',
+      name: 'Floor Plank with Alternate Shoulder Taps',
+      category: 'Core',
+      primaryMuscle: 'Abdominals & Core',
+      secondaryMuscles: 'Anterior Deltoid, Obliques',
+      equipment: '100% Without Gym Equipment (Home Floor)',
+      difficulty: 'Beginner',
+      calories: 8.5,
+      image: 'images/exercise_bench_press.jpg',
+      instructions: [
+        'Assume a high plank push-up position on your home floor.',
+        'Brace core firmly so hips remain perfectly square to the floor.',
+        'Lift right hand to touch left shoulder without twisting torso, then return to floor.',
+        'Repeat on opposite side in a smooth, alternating cadence.'
+      ],
+      mistakes: ['Rocking hips from side to side', 'Letting lower back sag'],
+      tempo: '2-0-2-0 (Controlled Balance)',
+      breathing: 'Breathe rhythmically throughout the hold.',
+      homeVersion: 'Plank Shoulder Tap (Primary No Gym)',
+      machineVersion: 'Abdominal Crunch Machine',
+      dumbbellVersion: 'Renegade Row'
+    },
+    {
+      slug: 'glute-bridge-single-leg',
+      name: 'Single-Leg Floor Glute Bridge',
+      category: 'Legs',
+      primaryMuscle: 'Gluteus Maximus',
+      secondaryMuscles: 'Hamstrings, Erector Spinae',
+      equipment: '100% Without Gym Equipment (Home Floor)',
+      difficulty: 'Beginner',
+      calories: 9.2,
+      image: 'images/exercise_deadlift.jpg',
+      instructions: [
+        'Lie on back on home floor with knees bent and feet hip-width apart.',
+        'Extend left leg straight up toward ceiling while keeping right heel planted.',
+        'Drive through right heel to elevate hips until thigh and torso form a straight line.',
+        'Squeeze right glute at the top for 1 second before lowering.'
+      ],
+      mistakes: ['Arching lower back instead of driving from glutes', 'Pushing through toes'],
+      tempo: '2-1-2-0 (1s Glute Squeeze)',
+      breathing: 'Inhale on descent; exhale on hip drive.',
+      homeVersion: 'Single-Leg Floor Glute Bridge (Primary No Gym)',
+      machineVersion: 'Seated Leg Curl Machine',
+      dumbbellVersion: 'Dumbbell Romanian Deadlift'
+    },
+    {
+      slug: 'mountain-climbers-hiit',
+      name: 'Explosive Floor Mountain Climbers',
+      category: 'Cardio',
+      primaryMuscle: 'Core & Abdominals',
+      secondaryMuscles: 'Hip Flexors, Anterior Deltoids, Cardio',
+      equipment: '100% Without Gym Equipment (Home Floor)',
+      difficulty: 'Beginner',
+      calories: 14.0,
+      image: 'images/exercise_barbell_squat.jpg',
+      instructions: [
+        'Start in a high push-up plank position with hands under shoulders.',
+        'Drive right knee toward chest explosively, keeping hips level.',
+        'Switch legs rapidly in a running motion while maintaining upper body stability.'
+      ],
+      mistakes: ['Bouncing hips up and down', 'Letting shoulders drift behind wrists'],
+      tempo: '1-0-1-0 (HIIT Sprint)',
+      breathing: 'Exhale sharply with each knee drive.',
+      homeVersion: 'Explosive Mountain Climbers (Primary No Gym)',
+      machineVersion: 'Treadmill Sprint Interval',
+      dumbbellVersion: 'Dumbbell Thruster'
+    },
+
+    // 3 COMMERCIAL GYM EXERCISES (BARBELL / RACK) FOR CONTRAST
     {
       slug: 'barbell-back-squat',
       name: 'Barbell Back Squat',
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings',
-      equipment: 'Barbell Rack',
+      equipment: 'Barbell Rack (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 11.2,
       image: 'images/exercise_barbell_squat.jpg',
@@ -169,7 +241,7 @@ export const ExerciseLibraryPage: React.FC = () => {
       category: 'Chest',
       primaryMuscle: 'Pectoralis Major',
       secondaryMuscles: 'Anterior Deltoid, Triceps Brachii',
-      equipment: 'Barbell Bench',
+      equipment: 'Barbell Bench (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 9.5,
       image: 'images/exercise_bench_press.jpg',
@@ -197,7 +269,7 @@ export const ExerciseLibraryPage: React.FC = () => {
       category: 'Back',
       primaryMuscle: 'Erector Spinae',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings, Latissimus Dorsi',
-      equipment: 'Barbell & Plates',
+      equipment: 'Barbell & Plates (Gym Equipment Required)',
       difficulty: 'Advanced',
       calories: 12.8,
       image: 'images/exercise_deadlift.jpg',
@@ -228,7 +300,8 @@ export const ExerciseLibraryPage: React.FC = () => {
       ex.primaryMuscle.toLowerCase().includes(search.toLowerCase()) ||
       ex.equipment.toLowerCase().includes(search.toLowerCase());
     const matchesCat = category === 'ALL' || ex.category === category;
-    return matchesQ && matchesCat;
+    const matchesNoGym = !onlyNoGym || ex.equipment.includes('Without Gym Equipment');
+    return matchesQ && matchesCat && matchesNoGym;
   });
 
   return (
@@ -236,19 +309,23 @@ export const ExerciseLibraryPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            3D Exercise Library (Gym & No-Gym Home Workouts)
+            3D Exercise Library (Gym & Zero-Gym Equipment)
           </h2>
           <p className="text-sm text-gray-400 mt-1">
-            Featuring high-definition 3D human models, primary/secondary/stabilizer highlights, and No-Gym Household / Bodyweight variations.
+            Featuring high-definition 3D human models, primary/secondary/stabilizer highlights, and 100% Without Gym Equipment bodyweight variations.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={enableHomeWorkoutMode}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white text-xs font-extrabold shadow-lg flex items-center space-x-1.5 transition"
+            onClick={() => setOnlyNoGym(!onlyNoGym)}
+            className={`px-4 py-2.5 rounded-xl text-xs font-extrabold shadow-lg flex items-center space-x-1.5 transition ${
+              onlyNoGym
+                ? 'bg-emerald-600 text-white shadow-emerald-500/30'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            }`}
           >
             <Home className="w-4 h-4" />
-            <span>Switch to No-Gym Home Workout</span>
+            <span>{onlyNoGym ? '🏠 Showing 100% Zero-Gym Only' : 'Filter: Show Zero-Gym Only'}</span>
           </button>
           <div className="relative">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
@@ -256,7 +333,7 @@ export const ExerciseLibraryPage: React.FC = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search gym or no-gym..."
+              placeholder="Search exercise..."
               className="pl-9 pr-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm font-medium text-white focus:outline-none focus:border-blue-500 w-56 sm:w-64"
             />
           </div>
@@ -280,8 +357,11 @@ export const ExerciseLibraryPage: React.FC = () => {
             <option value="Shoulders" className="bg-gray-900">
               Shoulders (Delts)
             </option>
-            <option value="Arms" className="bg-gray-900">
-              Arms (Biceps/Triceps)
+            <option value="Core" className="bg-gray-900">
+              Core & Abdominals
+            </option>
+            <option value="Cardio" className="bg-gray-900">
+              Cardio & HIIT
             </option>
           </select>
         </div>
@@ -303,9 +383,13 @@ export const ExerciseLibraryPage: React.FC = () => {
               <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur text-[10px] font-extrabold text-cyan-300">
                 {ex.category} • {ex.primaryMuscle}
               </div>
-              {ex.equipment.includes('No Gym') && (
+              {ex.equipment.includes('Without Gym') ? (
                 <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-[10px] font-extrabold shadow">
-                  🏠 NO GYM
+                  🏠 ZERO GYM
+                </div>
+              ) : (
+                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-blue-600/90 text-white text-[10px] font-extrabold shadow">
+                  🏋️ GYM EQUIPMENT
                 </div>
               )}
             </div>
@@ -318,7 +402,7 @@ export const ExerciseLibraryPage: React.FC = () => {
                 Secondary: {ex.secondaryMuscles}
               </p>
               <div className="flex items-center justify-between text-xs text-gray-400 pt-3 border-t border-white/10 font-semibold">
-                <span className="text-cyan-400">{ex.equipment}</span>
+                <span className={ex.equipment.includes('Without Gym') ? 'text-emerald-400' : 'text-cyan-400'}>{ex.equipment}</span>
                 <button
                   onClick={() => openExerciseModal(ex)}
                   className="text-blue-400 font-bold hover:underline flex items-center space-x-1"
