@@ -1,0 +1,10 @@
+{
+  "name": "apex-ai-fitness-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd web-application && npm install && npm run build",
+    "dev": "cd web-application && npm run dev",
+    "start": "cd web-application && npm run dev"
+  }
+}

@@ -5,7 +5,7 @@ import { soundService } from '../services/soundService';
 export const FoodScannerPage: React.FC = () => {
   const { logMeal, showToast } = useFitnessStore();
 
-  const [imgUrl, setImgUrl] = useState<string>('images/food_indian_thali.jpg');
+  const [imgUrl, setImgUrl] = useState<string>('/images/food_indian_thali.jpg');
   const [foodName, setFoodName] = useState<string>(
     'High-Protein Indian Bowl (Paneer Tikka, Dal Tadka, Ragi Roti)'
   );
@@ -21,7 +21,7 @@ export const FoodScannerPage: React.FC = () => {
   const scanSample = (type: 'thali' | 'dosa') => {
     soundService.playSuccess();
     if (type === 'dosa') {
-      setImgUrl('images/food_dosa_sambar.jpg');
+      setImgUrl('/images/food_dosa_sambar.jpg');
       setFoodName('Masala Dosa with Sambar & White Coconut Chutney');
       setCalories(385);
       setProtein(8.5);
@@ -32,7 +32,7 @@ export const FoodScannerPage: React.FC = () => {
         'For a higher protein swap, try Pesarattu (Moong Dal Dosa) or Ragi Dosa to add +10g protein.'
       );
     } else {
-      setImgUrl('images/food_indian_thali.jpg');
+      setImgUrl('/images/food_indian_thali.jpg');
       setFoodName('High-Protein Indian Bowl (Paneer Tikka, Dal Tadka, Ragi Roti)');
       setCalories(540);
       setProtein(31.5);

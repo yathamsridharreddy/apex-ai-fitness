@@ -18,7 +18,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Beginner',
       calories: 12.5,
-      image: 'images/exercise_bodyweight_squat.jpg',
+      image: '/images/exercise_bodyweight_squat.jpg',
       instructions: [
         'Stand with feet shoulder-width apart on your home floor.',
         'Hinge hips back and descend until thighs break parallel.',
@@ -45,7 +45,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Beginner',
       calories: 9.8,
-      image: 'images/exercise_floor_pushup.jpg',
+      image: '/images/exercise_floor_pushup.jpg',
       instructions: [
         'Place hands slightly wider than shoulder-width on your home floor.',
         'Brace core and glutes to create a straight line from heels to head.',
@@ -72,7 +72,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: '100% Without Gym Equipment (Home Chair)',
       difficulty: 'Intermediate',
       calories: 11.0,
-      image: 'images/exercise_chair_split_squat.jpg',
+      image: '/images/exercise_chair_split_squat.jpg',
       instructions: [
         'Elevate rear foot on a sturdy household chair or sofa behind you.',
         'Hop front foot forward so shin remains relatively vertical at the bottom.',
@@ -99,7 +99,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: '100% Without Gym Equipment (Home Floor)',
       difficulty: 'Intermediate',
       calories: 9.2,
-      image: 'images/exercise_pike_pushup.jpg',
+      image: '/images/exercise_pike_pushup.jpg',
       instructions: [
         'Assume a downward dog / inverted V position with hips elevated high.',
         'Bend elbows to lower crown of head forward toward floor in front of hands.',
@@ -121,7 +121,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: '100% Without Gym Equipment (Home Doorframe)',
       difficulty: 'Beginner',
       calories: 9.0,
-      image: 'images/exercise_doorframe_row.jpg',
+      image: '/images/exercise_doorframe_row.jpg',
       instructions: [
         'Grip both sides of a sturdy household doorframe or use a towel looped around a secure door handle.',
         'Lean torso back with heels planted on floor and core braced.',
@@ -144,7 +144,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: 'Barbell Rack (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 11.2,
-      image: 'images/exercise_barbell_squat.jpg',
+      image: '/images/exercise_barbell_squat.jpg',
       instructions: [
         'Position the barbell evenly across upper trapezius muscles.',
         'Unrack with feet shoulder-width apart, toes slightly angled out 15 degrees.',
@@ -172,7 +172,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: 'Barbell Bench (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 9.5,
-      image: 'images/exercise_bench_press.jpg',
+      image: '/images/exercise_bench_press.jpg',
       instructions: [
         'Lie flat on the bench with eyes directly below the barbell.',
         'Grip slightly wider than shoulder-width with wrists stacked straight.',
@@ -200,7 +200,7 @@ export const MuscleMapPage: React.FC = () => {
       equipment: 'Barbell & Plates (Gym Equipment Required)',
       difficulty: 'Advanced',
       calories: 12.8,
-      image: 'images/exercise_deadlift.jpg',
+      image: '/images/exercise_deadlift.jpg',
       instructions: [
         'Stand with mid-foot directly underneath the barbell, feet hip-width apart.',
         'Hinge at hips and grip the bar shoulder-width apart.',
