@@ -19,7 +19,8 @@ import {
   Scan,
   User,
   Bot,
-  TrendingUp
+  TrendingUp,
+  LogOut
 } from 'lucide-react';
 import { TabId } from '../types';
 
@@ -32,7 +33,8 @@ export const Navbar: React.FC = () => {
     setTheme,
     isVoiceCoachOn,
     toggleVoiceCoach,
-    openOnboardingModal
+    openOnboardingModal,
+    logout
   } = useFitnessStore();
 
   const [timeStr, setTimeStr] = useState<string>('18:30');
@@ -153,9 +155,18 @@ export const Navbar: React.FC = () => {
           <button
             onClick={openOnboardingModal}
             className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold flex items-center space-x-1.5 transition"
+            title="Edit Profile & Body Stats"
           >
             <UserCheck className="w-4 h-4 text-cyan-400" />
-            <span className="hidden sm:inline">Profile</span>
+            <span className="hidden sm:inline">Profile ({profile.name.split(' ')[0]})</span>
+          </button>
+
+          <button
+            onClick={logout}
+            className="p-2 rounded-xl bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 text-red-400 transition"
+            title="Sign Out of Account"
+          >
+            <LogOut className="w-4 h-4" />
           </button>
 
           <button

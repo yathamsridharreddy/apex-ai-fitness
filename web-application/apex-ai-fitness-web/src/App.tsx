@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useFitnessStore } from './store/useFitnessStore';
 import { Navbar } from './components/Navbar';
 import { ToastBanner } from './components/ToastBanner';
+import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { WorkoutEnginePage } from './pages/WorkoutEnginePage';
 import { ExerciseLibraryPage } from './pages/ExerciseLibraryPage';
@@ -18,7 +19,7 @@ import { OnboardingModal } from './components/modals/OnboardingModal';
 import { CelebrationModal } from './components/modals/CelebrationModal';
 
 const App: React.FC = () => {
-  const { theme, activeTab } = useFitnessStore();
+  const { theme, activeTab, auth } = useFitnessStore();
 
   useEffect(() => {
     document.body.classList.remove('light-mode', 'oled-mode');
@@ -28,6 +29,16 @@ const App: React.FC = () => {
       document.body.classList.add('oled-mode');
     }
   }, [theme]);
+
+  // If user is not logged in, display the Authentication & Login Screen (zero predefined user data)
+  if (!auth.isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+        <ToastBanner />
+        <LoginPage />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
