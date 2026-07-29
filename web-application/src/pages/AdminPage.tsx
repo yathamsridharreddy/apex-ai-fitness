@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { soundService } from '../services/soundService';
+import { useFitnessStore } from '../store/useFitnessStore';
 
 export const AdminPage: React.FC = () => {
+  const { showToast } = useFitnessStore();
   const [subTab, setSubTab] = useState<'users' | 'exercises' | 'nutrition'>('users');
 
   const exportCSV = () => {
@@ -16,6 +18,7 @@ export const AdminPage: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    showToast('Exported CSV Telemetry Report: apex_ai_enterprise_report.csv', 'success');
   };
 
   const addRecord = () => {
@@ -25,7 +28,7 @@ export const AdminPage: React.FC = () => {
       'New Custom Exercise Protocol'
     );
     if (name) {
-      alert(`Record "${name}" added to PostgreSQL/SQLite Database Queue!`);
+      showToast(`Record "${name}" added to PostgreSQL/SQLite Database Queue!`, 'success');
       soundService.playSuccess();
     }
   };
@@ -36,20 +39,19 @@ export const AdminPage: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-xs font-extrabold text-purple-400 uppercase tracking-wider mb-1">
             <ShieldAlert className="w-4 h-4 text-purple-400" />
-            <span>Enterprise Super-Admin Portal • SQLite & PostgreSQL Server Sync</span>
+            <span>Enterprise Admin Portal</span>
           </div>
-          <h2 className="text-2xl font-extrabold">Apex AI Pro Enterprise Admin Dashboard</h2>
+          <h2 className="text-2xl font-extrabold">Apex AI Pro Admin Dashboard</h2>
           <p className="text-xs text-gray-300 mt-1 font-medium">
-            Manage Users, 3D Exercises, Videos, Nutrition Database, Subscriptions, System Reports, and
-            Content.
+            Manage Users, 3D Exercises, Nutrition DB, Subscriptions, and Reports.
           </p>
         </div>
         <div className="flex items-center space-x-3">
           <button
-            onClick={() => alert('Exported complete JSON dump!')}
+            onClick={() => showToast('Exported complete JSON dump!', 'success')}
             className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-extrabold text-white border border-white/15"
           >
-            Export JSON Dump
+            Export JSON
           </button>
           <button
             onClick={exportCSV}
@@ -62,7 +64,7 @@ export const AdminPage: React.FC = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="glass-card p-5">
-          <div className="text-xs text-gray-400 font-bold uppercase">Total Active Users</div>
+          <div className="text-xs text-gray-400 font-bold uppercase">Active Users</div>
           <div className="text-3xl font-extrabold text-white mt-1">14,280</div>
           <div className="text-[11px] text-emerald-400 font-bold mt-1">+18% this month</div>
         </div>
@@ -124,7 +126,7 @@ export const AdminPage: React.FC = () => {
             onClick={addRecord}
             className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-extrabold shadow"
           >
-            + Add New Record
+            + Add Record
           </button>
         </div>
 

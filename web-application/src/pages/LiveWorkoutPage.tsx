@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useFitnessStore } from '../store/useFitnessStore';
 import { soundService } from '../services/soundService';
-import { PlayCircle, Eye, Volume2, Plus, ArrowRight, Droplets } from 'lucide-react';
+import { Plus, ArrowRight, Droplets } from 'lucide-react';
+import { RealHumanMotionVisualizer } from '../components/RealHumanMotionVisualizer';
 
 export const LiveWorkoutPage: React.FC = () => {
   const {
@@ -9,12 +10,24 @@ export const LiveWorkoutPage: React.FC = () => {
     toggleCompleteSet,
     addLiveSet,
     finishLiveWorkout,
-    logWater
+    logWater,
+    showToast
   } = useFitnessStore();
 
   const [restTimeRemain, setRestTimeRemain] = useState<number>(0);
   const [workoutTimeSec, setWorkoutTimeSec] = useState<number>(142);
-  const [currentSlug, setCurrentSlug] = useState<string>('barbell-back-squat');
+  const [currentSlug, setCurrentSlug] = useState<string>('bodyweight-jump-squat');
+
+  const exerciseOrder = [
+    'bodyweight-jump-squat',
+    'strict-push-up',
+    'bulgarian-split-squat-home',
+    'pike-push-up-home',
+    'doorframe-towel-row',
+    'barbell-back-squat',
+    'barbell-bench-press',
+    'conventional-deadlift'
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -45,6 +58,7 @@ export const LiveWorkoutPage: React.FC = () => {
   const startRestTimer = (sec: number) => {
     soundService.playClick();
     setRestTimeRemain(sec);
+    showToast(`Rest timer started: ${sec} seconds`, 'info');
   };
 
   const formatTime = (sec: number) => {
@@ -53,34 +67,121 @@ export const LiveWorkoutPage: React.FC = () => {
     return `${String(min).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const EX_INFO: Record<string, { name: string; primary: string; secondary: string; image: string; tempo: string; breath: string }> = {
+  const EX_INFO: Record<
+    string,
+    {
+      name: string;
+      primary: string;
+      secondary: string;
+      image: string;
+      tempo: string;
+      breath: string;
+      equip: string;
+      motionType: 'squat' | 'pushup' | 'row' | 'pike' | 'split_squat' | 'default';
+      reps: number;
+    }
+  > = {
+    'bodyweight-jump-squat': {
+      name: 'Explosive Bodyweight Jump Squat',
+      primary: 'Quadriceps',
+      secondary: 'Glutes, Hamstrings, Calves',
+      image: '/images/exercise_bodyweight_squat.jpg',
+      tempo: '2-0-X-0 (Explosive Jump)',
+      breath: 'Inhale Down / Exhale Jump',
+      equip: '100% Without Gym Equipment (Home Floor)',
+      motionType: 'squat',
+      reps: 15
+    },
+    'strict-push-up': {
+      name: 'Strict Anatomical Floor Push-Up',
+      primary: 'Pectoralis Major',
+      secondary: 'Anterior Deltoids, Triceps',
+      image: '/images/exercise_floor_pushup.jpg',
+      tempo: '2-1-1-0 (1s Floor Pause)',
+      breath: 'Inhale Down / Exhale Up',
+      equip: '100% Without Gym Equipment (Home Floor)',
+      motionType: 'pushup',
+      reps: 15
+    },
+    'bulgarian-split-squat-home': {
+      name: 'Chair Bulgarian Split Squat',
+      primary: 'Quadriceps',
+      secondary: 'Gluteus Maximus, Hamstrings',
+      image: '/images/exercise_chair_split_squat.jpg',
+      tempo: '3-1-1-0 (3s Negative)',
+      breath: 'Inhale Down / Exhale Up',
+      equip: '100% Without Gym Equipment (Home Chair)',
+      motionType: 'split_squat',
+      reps: 12
+    },
+    'pike-push-up-home': {
+      name: 'Bodyweight Pike Shoulder Push-Up',
+      primary: 'Anterior Deltoid',
+      secondary: 'Upper Trapezius, Triceps Brachii',
+      image: '/images/exercise_pike_pushup.jpg',
+      tempo: '2-1-1-0 (Controlled Descent)',
+      breath: 'Inhale Down / Exhale Up',
+      equip: '100% Without Gym Equipment (Home Floor)',
+      motionType: 'pike',
+      reps: 12
+    },
+    'doorframe-towel-row': {
+      name: 'Doorframe / Table Inverted Row',
+      primary: 'Latissimus Dorsi',
+      secondary: 'Rhomboids, Biceps Brachii, Rear Delts',
+      image: '/images/exercise_doorframe_row.jpg',
+      tempo: '2-1-1-0 (1s Scapular Squeeze)',
+      breath: 'Exhale Pull / Inhale Release',
+      equip: '100% Without Gym Equipment (Home Doorframe)',
+      motionType: 'row',
+      reps: 15
+    },
     'barbell-back-squat': {
       name: 'Barbell Back Squat',
       primary: 'Quadriceps',
       secondary: 'Glutes, Hamstrings',
-      image: 'images/exercise_barbell_squat.jpg',
+      image: '/images/exercise_barbell_squat.jpg',
       tempo: '3-1-1-0 (3s Descent)',
-      breath: 'Inhale Down / Exhale Up'
+      breath: 'Inhale Down / Exhale Up',
+      equip: 'Barbell Rack (Gym Equipment)',
+      motionType: 'squat',
+      reps: 10
     },
     'barbell-bench-press': {
       name: 'Flat Barbell Bench Press',
       primary: 'Pectoralis Major',
       secondary: 'Anterior Deltoid, Triceps',
-      image: 'images/exercise_bench_press.jpg',
+      image: '/images/exercise_bench_press.jpg',
       tempo: '2-1-1-0 (2s Lowering)',
-      breath: 'Inhale Down / Exhale Up'
+      breath: 'Inhale Down / Exhale Up',
+      equip: 'Barbell Bench (Gym Equipment)',
+      motionType: 'pushup',
+      reps: 10
     },
     'conventional-deadlift': {
       name: 'Conventional Barbell Deadlift',
       primary: 'Erector Spinae',
       secondary: 'Glutes, Hamstrings, Lats',
-      image: 'images/exercise_deadlift.jpg',
+      image: '/images/exercise_deadlift.jpg',
       tempo: '2-0-1-1 (Dead Stop)',
-      breath: 'Brace Bottom / Exhale Top'
+      breath: 'Brace Bottom / Exhale Top',
+      equip: 'Barbell & Plates (Gym Equipment)',
+      motionType: 'default',
+      reps: 8
     }
   };
 
-  const info = EX_INFO[currentSlug] || EX_INFO['barbell-back-squat'];
+  const info = EX_INFO[currentSlug] || EX_INFO['bodyweight-jump-squat'];
+
+  const advanceExercise = () => {
+    soundService.playSuccess();
+    const currentIdx = exerciseOrder.indexOf(currentSlug);
+    const nextIdx = (currentIdx + 1) % exerciseOrder.length;
+    const nextSlug = exerciseOrder[nextIdx];
+    setCurrentSlug(nextSlug);
+    const nextInfo = EX_INFO[nextSlug];
+    showToast(`Switched to Next Exercise: ${nextInfo.name}!`, 'success');
+  };
 
   return (
     <div className="space-y-6">
@@ -91,17 +192,28 @@ export const LiveWorkoutPage: React.FC = () => {
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
             <span>Live Workout Protocol Active • AI Voice Coach Ready</span>
           </div>
-          <h2 className="text-3xl font-extrabold">{info.name}</h2>
+          <div className="flex items-center space-x-3">
+            <h2 className="text-3xl font-extrabold">{info.name}</h2>
+            {info.equip.includes('Without Gym') ? (
+              <span className="px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-extrabold shadow">
+                🏠 100% ZERO GYM EQUIPMENT
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full bg-blue-600/90 text-white text-xs font-extrabold shadow">
+                🏋️ GYM EQUIPMENT
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-300 mt-1">
             Primary: <span className="text-blue-400 font-bold">{info.primary}</span> • Secondary:{' '}
-            <span className="text-cyan-400 font-bold">{info.secondary}</span>
+            <span className="text-cyan-400 font-bold">{info.secondary}</span> • <span className="text-emerald-400 font-bold">{info.equip}</span>
           </p>
         </div>
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
-            <div className="text-[10px] text-gray-400 font-bold uppercase">Switch Lift</div>
+            <div className="text-[10px] text-gray-400 font-bold uppercase">Switch Exercise</div>
             <select
               value={currentSlug}
               onChange={(e) => {
@@ -110,15 +222,34 @@ export const LiveWorkoutPage: React.FC = () => {
               }}
               className="bg-transparent text-white text-xs font-bold focus:outline-none"
             >
-              <option value="barbell-back-squat" className="bg-gray-900">
-                Barbell Back Squat
-              </option>
-              <option value="barbell-bench-press" className="bg-gray-900">
-                Flat Bench Press
-              </option>
-              <option value="conventional-deadlift" className="bg-gray-900">
-                Conventional Deadlift
-              </option>
+              <optgroup label="🏠 100% Without Gym Equipment (Home)">
+                <option value="bodyweight-jump-squat" className="bg-gray-900">
+                  Explosive Bodyweight Jump Squat (0% Gym)
+                </option>
+                <option value="strict-push-up" className="bg-gray-900">
+                  Strict Anatomical Floor Push-Up (0% Gym)
+                </option>
+                <option value="bulgarian-split-squat-home" className="bg-gray-900">
+                  Chair Bulgarian Split Squat (0% Gym)
+                </option>
+                <option value="pike-push-up-home" className="bg-gray-900">
+                  Bodyweight Pike Shoulder Push-Up (0% Gym)
+                </option>
+                <option value="doorframe-towel-row" className="bg-gray-900">
+                  Doorframe / Table Inverted Row (0% Gym)
+                </option>
+              </optgroup>
+              <optgroup label="🏋️ Gym Equipment Required">
+                <option value="barbell-back-squat" className="bg-gray-900">
+                  Barbell Back Squat
+                </option>
+                <option value="barbell-bench-press" className="bg-gray-900">
+                  Flat Bench Press
+                </option>
+                <option value="conventional-deadlift" className="bg-gray-900">
+                  Conventional Deadlift
+                </option>
+              </optgroup>
             </select>
           </div>
 
@@ -133,7 +264,7 @@ export const LiveWorkoutPage: React.FC = () => {
           {/* Rest Timer Button / Modal */}
           <div
             className="text-center px-4 py-2 rounded-xl bg-orange-500/20 border border-orange-500/40 cursor-pointer transition hover:bg-orange-500/30"
-            onClick={() => startRestTimer(90)}
+            onClick={() => startRestTimer(60)}
           >
             <div className="text-[10px] text-orange-300 font-bold uppercase">Rest Timer</div>
             <div className="text-lg font-extrabold font-mono text-orange-400">
@@ -153,31 +284,17 @@ export const LiveWorkoutPage: React.FC = () => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 7 cols */}
+        {/* Left 7 cols: Real Human Biomechanical Motion Engine */}
         <div className="lg:col-span-7 glass-card p-6 flex flex-col justify-between space-y-4">
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black/40 border border-white/15 flex items-center justify-center group">
-            <img
-              src={info.image}
-              alt={info.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute top-4 left-4 px-3.5 py-1.5 rounded-xl bg-black/75 backdrop-blur-md border border-cyan-500/40 text-xs font-extrabold text-cyan-300 flex items-center space-x-2">
-              <Eye className="w-4 h-4 text-cyan-400" />
-              <span>3D Muscle Overlay: {info.primary}</span>
-            </div>
-            <button
-              onClick={() =>
-                soundService.playVoiceCue(
-                  '/audio/workout_start.mp3',
-                  "Welcome to your Apex AI workout session. Let's focus on proper form, tempo, and progressive overload. Let's begin!"
-                )
-              }
-              className="absolute bottom-4 right-4 px-4 py-2.5 rounded-xl bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-extrabold shadow-lg flex items-center space-x-2 backdrop-blur-md transition"
-            >
-              <Volume2 className="w-4 h-4" />
-              <span>Hear Voice Coach Cue</span>
-            </button>
-          </div>
+          
+          <RealHumanMotionVisualizer
+            image={info.image}
+            name={info.name}
+            primaryMuscle={info.primary}
+            targetReps={info.reps}
+            tempo={info.tempo}
+            motionType={info.motionType}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
@@ -189,8 +306,8 @@ export const LiveWorkoutPage: React.FC = () => {
               <div className="text-sm font-extrabold text-cyan-400 mt-0.5">{info.breath}</div>
             </div>
             <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-              <div className="text-xs font-bold text-gray-400">AI Overload Status</div>
-              <div className="text-sm font-extrabold text-emerald-400 mt-0.5">+2.5kg Target PR</div>
+              <div className="text-xs font-bold text-gray-400">Equipment Needed</div>
+              <div className="text-sm font-extrabold text-emerald-400 mt-0.5">{info.equip.includes('Without Gym') ? '0% Gym Equipment' : 'Barbell/Weights'}</div>
             </div>
           </div>
 
@@ -210,9 +327,7 @@ export const LiveWorkoutPage: React.FC = () => {
                   key={val}
                   onClick={() => {
                     soundService.playSuccess();
-                    alert(
-                      `Set RPE recorded: ${val}. AI progressive overload will adjust your next working set load automatically!`
-                    );
+                    showToast(`Set RPE recorded: ${val}. AI progressive overload calibrated!`, 'success');
                   }}
                   className="px-2.5 py-1 rounded bg-white/10 hover:bg-blue-600 text-xs font-bold transition"
                 >
@@ -254,7 +369,7 @@ export const LiveWorkoutPage: React.FC = () => {
                   </span>
                   <div>
                     <div className="text-xs font-extrabold text-white">
-                      {s.weight} kg x {s.reps} reps
+                      {s.weight === 0 ? 'Bodyweight' : `${s.weight} kg`} x {s.reps} reps
                     </div>
                     <div className="text-[10px] text-gray-400 font-medium">Target RPE: 8.0</div>
                   </div>
@@ -263,7 +378,7 @@ export const LiveWorkoutPage: React.FC = () => {
                   onClick={() => {
                     toggleCompleteSet(idx);
                     if (!s.isCompleted) {
-                      startRestTimer(90);
+                      startRestTimer(60);
                     }
                   }}
                   className={`px-3.5 py-1.5 rounded-lg ${
@@ -286,7 +401,7 @@ export const LiveWorkoutPage: React.FC = () => {
               <span>Add Set</span>
             </button>
             <button
-              onClick={() => alert('Advancing to next exercise: Flat Barbell Bench Press!')}
+              onClick={advanceExercise}
               className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-extrabold text-white transition flex items-center justify-center space-x-1.5 shadow-lg shadow-blue-500/30"
             >
               <span>Next Exercise</span>

@@ -1,4 +1,4 @@
-// APEX AI FITNESS — PRO (Full-Stack TypeScript Types)
+// APEX AI FITNESS — PRO (Full-Stack TypeScript Types with User Authentication)
 
 export type ThemeMode = 'dark' | 'oled' | 'light';
 export type TabId =
@@ -13,6 +13,16 @@ export type TabId =
   | 'ai-coach'
   | 'analytics'
   | 'admin';
+
+export interface UserAuth {
+  isAuthenticated: boolean;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    avatar?: string;
+  } | null;
+}
 
 export interface ExerciseItem {
   slug: string;

@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
 import { useFitnessStore } from '../../store/useFitnessStore';
 import { soundService } from '../../services/soundService';
+import { RealHumanMotionVisualizer } from '../RealHumanMotionVisualizer';
 
 export const ExerciseDetailModal: React.FC = () => {
   const { selectedExerciseModal, closeExerciseModal } = useFitnessStore();
   const [view, setView] = useState<'FRONT' | 'BACK' | 'SIDE'>('FRONT');
-  const [slowMo, setSlowMo] = useState(true);
 
   if (!selectedExerciseModal) return null;
   const ex = selectedExerciseModal;
+
+  const getMotionType = (slug: string) => {
+    if (slug.includes('squat') && slug.includes('split')) return 'split_squat';
+    if (slug.includes('squat')) return 'squat';
+    if (slug.includes('push-up') && slug.includes('pike')) return 'pike';
+    if (slug.includes('push-up') || slug.includes('bench')) return 'pushup';
+    if (slug.includes('row')) return 'row';
+    return 'default';
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4">
@@ -33,17 +42,17 @@ export const ExerciseDetailModal: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
-            <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black/50 border border-white/15 relative flex items-center justify-center">
-              <img
-                src={ex.image}
-                alt="Realistic Human Anatomical Render"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-3 left-3 px-3.5 py-1.5 rounded-xl bg-black/75 backdrop-blur text-xs font-extrabold text-cyan-300">
-                ⚡ Primary Muscle: {ex.primaryMuscle}
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-2 text-center text-xs font-bold">
+            {/* True Biomechanical Articulated Human Motion Engine */}
+            <RealHumanMotionVisualizer
+              image={ex.image}
+              name={ex.name}
+              primaryMuscle={ex.primaryMuscle}
+              targetReps={ex.equipment.includes('Without Gym') ? 15 : 10}
+              tempo={ex.tempo}
+              motionType={getMotionType(ex.slug)}
+            />
+
+            <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold">
               <button
                 onClick={() => {
                   soundService.playClick();
@@ -53,7 +62,7 @@ export const ExerciseDetailModal: React.FC = () => {
                   view === 'FRONT' ? 'bg-blue-600 text-white shadow' : 'bg-white/10 text-gray-300'
                 }`}
               >
-                Front View
+                Front Angle
               </button>
               <button
                 onClick={() => {
@@ -64,7 +73,7 @@ export const ExerciseDetailModal: React.FC = () => {
                   view === 'BACK' ? 'bg-blue-600 text-white shadow' : 'bg-white/10 text-gray-300'
                 }`}
               >
-                Back View
+                Back Angle
               </button>
               <button
                 onClick={() => {
@@ -75,16 +84,7 @@ export const ExerciseDetailModal: React.FC = () => {
                   view === 'SIDE' ? 'bg-blue-600 text-white shadow' : 'bg-white/10 text-gray-300'
                 }`}
               >
-                Side View
-              </button>
-              <button
-                onClick={() => {
-                  soundService.playClick();
-                  setSlowMo(!slowMo);
-                }}
-                className="p-2.5 rounded-xl bg-emerald-600/30 text-emerald-300 font-extrabold"
-              >
-                Slow-Mo: {slowMo ? 'ON' : 'OFF'}
+                Side Angle
               </button>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { soundService } from '../services/soundService';
 import { IndianFoodItem } from '../types';
 
 export const IndianDietPage: React.FC = () => {
-  const { profile, isVegOnly, toggleVegOnly, logMeal } = useFitnessStore();
+  const { profile, isVegOnly, toggleVegOnly, logMeal, showToast } = useFitnessStore();
 
   const INDIAN_FOOD_DB: IndianFoodItem[] = [
     {
@@ -158,19 +158,18 @@ export const IndianDietPage: React.FC = () => {
     const cal = Number(prompt('Enter Calories:', '420') || '420');
     const pro = Number(prompt('Enter Protein (grams):', '24') || '24');
     logMeal(name, cal, pro);
-    alert(`Logged Custom Meal: ${name} (+${cal} kcal, +${pro}g protein)!`);
   };
 
   return (
     <div className="space-y-6">
+      {/* Crisp Minimal Title */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            AI Personalized Diet Planner & Indian Nutrition
+            Indian Diet Planner
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            40+ authentic Indian foods (Thali, Dosa, Ragi, Paneer, Dal, Millets) + international
-            options with automatic macro balancing.
+          <p className="text-sm text-gray-400 mt-0.5">
+            40+ authentic regional Indian foods with macro tracking.
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -178,7 +177,7 @@ export const IndianDietPage: React.FC = () => {
             onClick={toggleVegOnly}
             className="px-5 py-2.5 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-400 font-extrabold text-xs transition"
           >
-            {isVegOnly ? '🌱 Vegetarian Only: ON' : '🍗 All Foods (Veg + Non-Veg)'}
+            {isVegOnly ? '🌱 Vegetarian: ON' : '🍗 All Foods (Veg + Non-Veg)'}
           </button>
           <button
             onClick={openCustomMeal}
@@ -192,7 +191,7 @@ export const IndianDietPage: React.FC = () => {
       {/* Target breakdown */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="glass-card p-5">
-          <div className="text-xs text-gray-400 font-bold uppercase">Daily Calories</div>
+          <div className="text-xs text-gray-400 font-bold uppercase">Calories</div>
           <div className="text-3xl font-extrabold text-orange-400 mt-1">
             {profile.targetCalories} kcal
           </div>
@@ -201,67 +200,55 @@ export const IndianDietPage: React.FC = () => {
           </div>
         </div>
         <div className="glass-card p-5">
-          <div className="text-xs text-gray-400 font-bold uppercase">Daily Protein Target</div>
+          <div className="text-xs text-gray-400 font-bold uppercase">Protein Target</div>
           <div className="text-3xl font-extrabold text-purple-400 mt-1">
             {profile.targetProtein}g
           </div>
           <div className="text-xs text-emerald-400 font-bold mt-1">2.2g / kg bodyweight</div>
         </div>
         <div className="glass-card p-5">
-          <div className="text-xs text-gray-400 font-bold uppercase">Carbohydrates</div>
+          <div className="text-xs text-gray-400 font-bold uppercase">Carbs</div>
           <div className="text-3xl font-extrabold text-cyan-400 mt-1">{profile.targetCarbs}g</div>
           <div className="text-xs text-gray-400 font-medium mt-1">Complex oats & millets</div>
         </div>
         <div className="glass-card p-5">
-          <div className="text-xs text-gray-400 font-bold uppercase">Healthy Fats</div>
+          <div className="text-xs text-gray-400 font-bold uppercase">Fats</div>
           <div className="text-3xl font-extrabold text-amber-400 mt-1">{profile.targetFat}g</div>
           <div className="text-xs text-gray-400 font-medium mt-1">Ghee, peanuts & olive oil</div>
         </div>
       </div>
 
       {/* Food Grid */}
-      <div className="glass-card p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-extrabold text-lg">
-            Indian & High-Protein Food Database (Click to Log or Swap)
-          </h3>
-          <span className="text-xs font-bold text-gray-400">40 Authentic Foods Loaded</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((f, idx) => (
-            <div key={idx} className="glass-card p-5 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`px-2.5 py-0.5 rounded text-[10px] font-extrabold ${
-                      f.isVegetarian
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-orange-500/20 text-orange-400'
-                    }`}
-                  >
-                    {f.isVegetarian ? '🌱 VEG' : '🍗 HIGH PROTEIN'}
-                  </span>
-                  <span className="text-xs font-extrabold text-orange-400">{f.calories} kcal</span>
-                </div>
-                <h4 className="font-extrabold text-base text-white mt-2.5">{f.name}</h4>
-                <p className="text-xs text-gray-400 font-medium mt-0.5">{f.serving}</p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                <span className="text-purple-400 font-extrabold">{f.protein}g Protein</span>
-                <button
-                  onClick={() => {
-                    logMeal(f.name, f.calories, f.protein);
-                    alert(`Logged: ${f.name} (+${f.calories} kcal, +${f.protein}g protein)!`);
-                  }}
-                  className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition"
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map((f, idx) => (
+          <div key={idx} className="glass-card p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between">
+                <span
+                  className={`px-2.5 py-0.5 rounded text-[10px] font-extrabold ${
+                    f.isVegetarian
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : 'bg-orange-500/20 text-orange-400'
+                  }`}
                 >
-                  + Log Meal
-                </button>
+                  {f.isVegetarian ? '🌱 VEG' : '🍗 HIGH PROTEIN'}
+                </span>
+                <span className="text-xs font-extrabold text-orange-400">{f.calories} kcal</span>
               </div>
+              <h4 className="font-extrabold text-base text-white mt-2">{f.name}</h4>
+              <p className="text-xs text-gray-400 font-medium mt-0.5">{f.serving}</p>
             </div>
-          ))}
-        </div>
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+              <span className="text-purple-400 font-extrabold">{f.protein}g Protein</span>
+              <button
+                onClick={() => logMeal(f.name, f.calories, f.protein)}
+                className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition"
+              >
+                + Log Meal
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

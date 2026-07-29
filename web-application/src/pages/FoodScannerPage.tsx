@@ -3,9 +3,9 @@ import { useFitnessStore } from '../store/useFitnessStore';
 import { soundService } from '../services/soundService';
 
 export const FoodScannerPage: React.FC = () => {
-  const { logMeal } = useFitnessStore();
+  const { logMeal, showToast } = useFitnessStore();
 
-  const [imgUrl, setImgUrl] = useState<string>('images/food_indian_thali.jpg');
+  const [imgUrl, setImgUrl] = useState<string>('/images/food_indian_thali.jpg');
   const [foodName, setFoodName] = useState<string>(
     'High-Protein Indian Bowl (Paneer Tikka, Dal Tadka, Ragi Roti)'
   );
@@ -21,7 +21,7 @@ export const FoodScannerPage: React.FC = () => {
   const scanSample = (type: 'thali' | 'dosa') => {
     soundService.playSuccess();
     if (type === 'dosa') {
-      setImgUrl('images/food_dosa_sambar.jpg');
+      setImgUrl('/images/food_dosa_sambar.jpg');
       setFoodName('Masala Dosa with Sambar & White Coconut Chutney');
       setCalories(385);
       setProtein(8.5);
@@ -32,7 +32,7 @@ export const FoodScannerPage: React.FC = () => {
         'For a higher protein swap, try Pesarattu (Moong Dal Dosa) or Ragi Dosa to add +10g protein.'
       );
     } else {
-      setImgUrl('images/food_indian_thali.jpg');
+      setImgUrl('/images/food_indian_thali.jpg');
       setFoodName('High-Protein Indian Bowl (Paneer Tikka, Dal Tadka, Ragi Roti)');
       setCalories(540);
       setProtein(31.5);
@@ -58,19 +58,19 @@ export const FoodScannerPage: React.FC = () => {
     setHealthScore(91);
     setAlternative('Good protein content! Add 50g boiled sprouts for an extra +6g dietary fiber.');
     soundService.playSuccess();
-    alert('AI Vision analysis complete! Nutritional breakdown updated.');
+    showToast('AI Vision analysis complete! Nutritional breakdown updated.', 'success');
   };
 
   return (
     <div className="space-y-6">
+      {/* Concise Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            AI Food Photo Scanner (Macro & Health Score Detection)
+            AI Food Photo Scanner
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Upload or snap a meal photo. Our AI vision detects food items, calculates macros, outputs
-            health score (0-100), and recommends healthier swaps.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Instant macro and health score detection with healthier swap advice.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -156,10 +156,7 @@ export const FoodScannerPage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => {
-              logMeal(foodName, calories, protein);
-              alert(`Logged: ${foodName} (+${calories} kcal, +${protein}g protein)!`);
-            }}
+            onClick={() => logMeal(foodName, calories, protein)}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/40 transition"
           >
             + Add to Today's Nutritional Log

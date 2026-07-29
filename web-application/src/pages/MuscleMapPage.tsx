@@ -4,21 +4,147 @@ import { soundService } from '../services/soundService';
 import { ExerciseItem } from '../types';
 
 export const MuscleMapPage: React.FC = () => {
-  const { openExerciseModal } = useFitnessStore();
+  const { openExerciseModal, showToast } = useFitnessStore();
   const [view, setView] = useState<'FRONT' | 'BACK'>('FRONT');
   const [selectedMuscle, setSelectedMuscle] = useState<string>('Chest');
 
   const EXERCISE_DB: ExerciseItem[] = [
+    {
+      slug: 'bodyweight-jump-squat',
+      name: 'Explosive Bodyweight Jump Squat',
+      category: 'Legs',
+      primaryMuscle: 'Quadriceps',
+      secondaryMuscles: 'Gluteus Maximus, Hamstrings, Calves',
+      equipment: '100% Without Gym Equipment (Home Floor)',
+      difficulty: 'Beginner',
+      calories: 12.5,
+      image: '/images/exercise_bodyweight_squat.jpg',
+      instructions: [
+        'Stand with feet shoulder-width apart on your home floor.',
+        'Hinge hips back and descend until thighs break parallel.',
+        'Explode upward through mid-foot into a vertical jump.',
+        'Land softly with slightly bent knees and immediately transition into the next repetition.'
+      ],
+      mistakes: [
+        'Landing with stiff knees',
+        'Allowing knees to collapse inward',
+        'Leaning torso too far forward'
+      ],
+      tempo: '2-0-X-0 (Explosive Jump)',
+      breathing: 'Inhale on controlled descent; exhale explosively on the jump.',
+      homeVersion: 'Bodyweight Jump Squat (Primary No Gym)',
+      machineVersion: 'Leg Press Machine',
+      dumbbellVersion: 'Dumbbell Goblet Squat'
+    },
+    {
+      slug: 'strict-push-up',
+      name: 'Strict Anatomical Floor Push-Up',
+      category: 'Chest',
+      primaryMuscle: 'Pectoralis Major',
+      secondaryMuscles: 'Anterior Deltoid, Triceps Brachii',
+      equipment: '100% Without Gym Equipment (Home Floor)',
+      difficulty: 'Beginner',
+      calories: 9.8,
+      image: '/images/exercise_floor_pushup.jpg',
+      instructions: [
+        'Place hands slightly wider than shoulder-width on your home floor.',
+        'Brace core and glutes to create a straight line from heels to head.',
+        'Lower chest under control until it lightly grazes the floor with elbows tucked at 45°.',
+        'Press explosively through palms back to full lockout.'
+      ],
+      mistakes: [
+        'Flaring elbows out to 90 degrees',
+        'Sagging hips or arching lumbar spine',
+        'Incomplete lockout at the top'
+      ],
+      tempo: '2-1-1-0 (1s Floor Pause)',
+      breathing: 'Inhale while lowering chest; exhale forcefully while pressing up.',
+      homeVersion: 'Strict Anatomical Floor Push-Up (Primary No Gym)',
+      machineVersion: 'Seated Chest Press Machine',
+      dumbbellVersion: 'Flat Dumbbell Bench Press'
+    },
+    {
+      slug: 'bulgarian-split-squat-home',
+      name: 'Chair Bulgarian Split Squat',
+      category: 'Legs',
+      primaryMuscle: 'Quadriceps',
+      secondaryMuscles: 'Gluteus Maximus, Hamstrings',
+      equipment: '100% Without Gym Equipment (Home Chair)',
+      difficulty: 'Intermediate',
+      calories: 11.0,
+      image: '/images/exercise_chair_split_squat.jpg',
+      instructions: [
+        'Elevate rear foot on a sturdy household chair or sofa behind you.',
+        'Hop front foot forward so shin remains relatively vertical at the bottom.',
+        'Lower rear knee toward floor until front thigh breaks parallel.',
+        'Drive through front heel to return to standing position.'
+      ],
+      mistakes: [
+        'Placing front foot too close to chair',
+        'Allowing front knee to wobble',
+        'Hyperextending lumbar spine'
+      ],
+      tempo: '3-1-1-0 (3s Negative)',
+      breathing: 'Inhale down; exhale as you drive up.',
+      homeVersion: 'Chair Bulgarian Split Squat (Primary No Gym)',
+      machineVersion: 'Leg Press Machine Single-Leg',
+      dumbbellVersion: 'Dumbbell Bulgarian Split Squat'
+    },
+    {
+      slug: 'pike-push-up-home',
+      name: 'Bodyweight Pike Shoulder Push-Up',
+      category: 'Shoulders',
+      primaryMuscle: 'Anterior Deltoid',
+      secondaryMuscles: 'Upper Trapezius, Triceps Brachii',
+      equipment: '100% Without Gym Equipment (Home Floor)',
+      difficulty: 'Intermediate',
+      calories: 9.2,
+      image: '/images/exercise_pike_pushup.jpg',
+      instructions: [
+        'Assume a downward dog / inverted V position with hips elevated high.',
+        'Bend elbows to lower crown of head forward toward floor in front of hands.',
+        'Press hands into floor to push torso up and back into inverted V lockout.'
+      ],
+      mistakes: ['Flaring elbows wide', 'Dropping hips flat into a standard push-up'],
+      tempo: '2-1-1-0 (Controlled Descent)',
+      breathing: 'Inhale as head lowers; exhale as shoulders press overhead.',
+      homeVersion: 'Bodyweight Pike Push-Up (Primary No Gym)',
+      machineVersion: 'Seated Shoulder Press Machine',
+      dumbbellVersion: 'Seated Dumbbell Shoulder Press'
+    },
+    {
+      slug: 'doorframe-towel-row',
+      name: 'Doorframe / Table Inverted Row',
+      category: 'Back',
+      primaryMuscle: 'Latissimus Dorsi',
+      secondaryMuscles: 'Rhomboids, Biceps Brachii, Rear Delts',
+      equipment: '100% Without Gym Equipment (Home Doorframe)',
+      difficulty: 'Beginner',
+      calories: 9.0,
+      image: '/images/exercise_doorframe_row.jpg',
+      instructions: [
+        'Grip both sides of a sturdy household doorframe or use a towel looped around a secure door handle.',
+        'Lean torso back with heels planted on floor and core braced.',
+        'Pull chest toward doorframe by driving elbows backward and squeezing scapulae together.',
+        'Extend arms under control back to full stretch.'
+      ],
+      mistakes: ['Shrugging shoulders toward ears', 'Using momentum from hips'],
+      tempo: '2-1-1-0 (1s Scapular Squeeze)',
+      breathing: 'Exhale while pulling chest up; inhale on controlled release.',
+      homeVersion: 'Doorframe Towel Row (Primary No Gym)',
+      machineVersion: 'Lat Pulldown / Seated Cable Row',
+      dumbbellVersion: 'Dumbbell Bent-Over Row'
+    },
     {
       slug: 'barbell-back-squat',
       name: 'Barbell Back Squat',
       category: 'Legs',
       primaryMuscle: 'Quadriceps',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings',
-      equipment: 'Barbell Rack',
+      equipment: 'Barbell Rack (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 11.2,
-      image: 'images/exercise_barbell_squat.jpg',
+      image: '/images/exercise_barbell_squat.jpg',
       instructions: [
         'Position the barbell evenly across upper trapezius muscles.',
         'Unrack with feet shoulder-width apart, toes slightly angled out 15 degrees.',
@@ -43,10 +169,10 @@ export const MuscleMapPage: React.FC = () => {
       category: 'Chest',
       primaryMuscle: 'Pectoralis Major',
       secondaryMuscles: 'Anterior Deltoid, Triceps Brachii',
-      equipment: 'Barbell Bench',
+      equipment: 'Barbell Bench (Gym Equipment Required)',
       difficulty: 'Intermediate',
       calories: 9.5,
-      image: 'images/exercise_bench_press.jpg',
+      image: '/images/exercise_bench_press.jpg',
       instructions: [
         'Lie flat on the bench with eyes directly below the barbell.',
         'Grip slightly wider than shoulder-width with wrists stacked straight.',
@@ -71,10 +197,10 @@ export const MuscleMapPage: React.FC = () => {
       category: 'Back',
       primaryMuscle: 'Erector Spinae',
       secondaryMuscles: 'Gluteus Maximus, Hamstrings, Latissimus Dorsi',
-      equipment: 'Barbell & Plates',
+      equipment: 'Barbell & Plates (Gym Equipment Required)',
       difficulty: 'Advanced',
       calories: 12.8,
-      image: 'images/exercise_deadlift.jpg',
+      image: '/images/exercise_deadlift.jpg',
       instructions: [
         'Stand with mid-foot directly underneath the barbell, feet hip-width apart.',
         'Hinge at hips and grip the bar shoulder-width apart.',
@@ -93,81 +219,13 @@ export const MuscleMapPage: React.FC = () => {
       homeVersion: 'Single-Leg Romanian Deadlift',
       machineVersion: 'Smith Machine RDL',
       dumbbellVersion: 'Dumbbell Romanian Deadlift'
-    },
-    {
-      slug: 'overhead-shoulder-press',
-      name: 'Standing Military Overhead Press',
-      category: 'Shoulders',
-      primaryMuscle: 'Anterior Deltoid',
-      secondaryMuscles: 'Medial Deltoid, Triceps Brachii, Upper Trapezius',
-      equipment: 'Barbell',
-      difficulty: 'Intermediate',
-      calories: 8.9,
-      image: 'images/exercise_bench_press.jpg',
-      instructions: [
-        'Rest barbell on upper chest and anterior deltoids with elbows slightly forward.',
-        'Brace glutes and abs to create a solid column of support.',
-        'Press bar in a straight vertical line, tilting head slightly back to clear chin.',
-        'Once bar passes forehead, press head forward under the bar into full lockout.'
-      ],
-      mistakes: ['Excessive lower back arching', 'Pressing bar forward instead of vertically'],
-      tempo: '2-0-1-0',
-      breathing: 'Inhale at chest level; exhale as arms reach overhead lockout.',
-      homeVersion: 'Pike Push-Up',
-      machineVersion: 'Seated Overhead Shoulder Machine',
-      dumbbellVersion: 'Seated Dumbbell Shoulder Press'
-    },
-    {
-      slug: 'pull-ups',
-      name: 'Strict Pronated Pull-Up',
-      category: 'Back',
-      primaryMuscle: 'Latissimus Dorsi',
-      secondaryMuscles: 'Biceps Brachii, Teres Major, Rhomboids',
-      equipment: 'Pull-Up Bar',
-      difficulty: 'Intermediate',
-      calories: 10.4,
-      image: 'images/exercise_deadlift.jpg',
-      instructions: [
-        'Grip overhead bar slightly wider than shoulder width with palms facing away.',
-        'Initiate movement by depressing scapulae and driving elbows down toward hips.',
-        'Pull chest up until chin clears the horizontal bar.',
-        'Lower under control to a dead hang with arms fully extended.'
-      ],
-      mistakes: ['Kipping or swinging legs', 'Incomplete lower range of motion', 'Shrugging shoulders'],
-      tempo: '2-1-1-0',
-      breathing: 'Exhale while pulling up; inhale on the controlled lowering phase.',
-      homeVersion: 'Doorframe Towel Rows',
-      machineVersion: 'Assisted Pull-Up Machine / Lat Pulldown',
-      dumbbellVersion: 'Dumbbell Bent-Over Row'
-    },
-    {
-      slug: 'romanian-deadlift',
-      name: 'Romanian Barbell Deadlift (RDL)',
-      category: 'Legs',
-      primaryMuscle: 'Hamstrings',
-      secondaryMuscles: 'Gluteus Maximus, Erector Spinae',
-      equipment: 'Barbell',
-      difficulty: 'Intermediate',
-      calories: 9.8,
-      image: 'images/exercise_deadlift.jpg',
-      instructions: [
-        'Stand holding barbell at hip level with shoulder-width grip.',
-        'Keep a slight 15-degree bend in knees and hold that knee angle constant.',
-        'Hinge hips backward as far as possible, sliding the bar down your thighs.',
-        'When you feel a deep hamstring stretch (mid-shin), squeeze glutes and extend hips forward.'
-      ],
-      mistakes: ['Bending knees too much', 'Rounding lower back'],
-      tempo: '3-1-1-0',
-      breathing: 'Inhale on the hinge down; exhale as you squeeze glutes at top.',
-      homeVersion: 'Single-Leg Bodyweight RDL',
-      machineVersion: 'Lying Leg Curl Machine',
-      dumbbellVersion: 'Dumbbell Romanian Deadlift'
     }
   ];
 
   const handleSelectMuscle = (m: string) => {
     soundService.playClick();
     setSelectedMuscle(m);
+    showToast(`Highlighted Muscle: ${m}`, 'info');
   };
 
   const matching = EXERCISE_DB.filter(
@@ -176,14 +234,14 @@ export const MuscleMapPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Crisp Minimal Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Interactive 3D Anatomical Muscle Map
+            Interactive 3D Muscle Map
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
-            Tap any muscle group (Chest, Back, Shoulders, Biceps, Triceps, Forearms, Core, Glutes,
-            Quads, Hamstrings, Calves, Neck) to filter matching exercises with instant 3D preview.
+          <p className="text-sm text-gray-400 mt-0.5">
+            Tap any muscle group to view matching exercises with 3D anatomical guides.
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -289,7 +347,7 @@ export const MuscleMapPage: React.FC = () => {
                 />
               </svg>
               <div className="text-center text-xs text-cyan-400 font-bold mt-2">
-                Tap any muscle above to view matching exercises!
+                Tap any muscle above to view exercises!
               </div>
             </div>
           ) : (
@@ -325,7 +383,7 @@ export const MuscleMapPage: React.FC = () => {
                 />
               </svg>
               <div className="text-center text-xs text-cyan-400 font-bold mt-2">
-                Back Anatomy View • Tap Back, Glutes or Hamstrings
+                Back Anatomy View • Tap Back or Glutes
               </div>
             </div>
           )}
