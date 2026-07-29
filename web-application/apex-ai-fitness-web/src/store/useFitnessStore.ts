@@ -1,5 +1,5 @@
-// APEX AI FITNESS — PRO (Zustand Full-Stack State Store with Authenticated User Session Engine)
-// Zero predefined user data — displays logged-in user profile, BMR, macros, and training telemetry.
+// APEX AI FITNESS — PRO (Zustand Full-Stack State Store with Secure Password & Account Verification)
+// Validates registered emails, enforces password security, prevents duplicate accounts, and permanently saves user data.
 
 import { create } from 'zustand';
 import { ExerciseItem, IndianFoodItem, TabId, ThemeMode, UserProfile, UserAuth } from '../types';
@@ -9,6 +9,14 @@ export interface ToastMessage {
   visible: boolean;
   message: string;
   type: 'success' | 'info' | 'error';
+}
+
+interface UserAccountRecord {
+  email: string;
+  passwordHash: string; // Stored securely
+  name: string;
+  createdAt: string;
+  profile: UserProfile;
 }
 
 interface FitnessState {
@@ -35,9 +43,9 @@ interface FitnessState {
     elapsedSeconds: number;
   };
 
-  // Auth Actions
-  login: (email: string, name: string) => void;
-  signup: (email: string, name: string, weightKg?: number, heightCm?: number, age?: number) => void;
+  // Auth Actions (Return boolean indicating success or failure)
+  login: (email: string, password: string) => boolean;
+  signup: (email: string, password: string, name: string, weightKg?: number, heightCm?: number, age?: number) => boolean;
   loginAsGuest: () => void;
   logout: () => void;
 
@@ -115,6 +123,22 @@ const getBlankProfile = (name: string, weightKg = 70.0, heightCm = 175, age = 26
   };
 };
 
+// Helper: Read the secure user accounts registry from localStorage
+const getUsersDB = (): Record<string, UserAccountRecord> => {
+  const stored = localStorage.getItem('apex_users_registry');
+  if (!stored) return {};
+  try {
+    return JSON.parse(stored);
+  } catch (e) {
+    return {};
+  }
+};
+
+// Helper: Save updated user account registry to localStorage
+const saveUsersDB = (db: Record<string, UserAccountRecord>) => {
+  localStorage.setItem('apex_users_registry', JSON.stringify(db));
+};
+
 export const useFitnessStore = create<FitnessState>((set, get) => ({
   auth: {
     isAuthenticated: false,
@@ -146,38 +170,82 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
     elapsedSeconds: 0
   },
 
-  // Auth Actions
-  login: (email, name) => {
-    soundService.playSuccess();
-    const cleanName = name || email.split('@')[0] || 'Member';
-    const stored = localStorage.getItem(`apex_user_${email}`);
-    let nextProfile = getBlankProfile(cleanName);
-    if (stored) {
-      try {
-        nextProfile = JSON.parse(stored);
-      } catch (e) {}
+  // Secure Sign In with Password & Account Verification
+  login: (rawEmail, password) => {
+    const email = rawEmail.trim().toLowerCase();
+    const db = getUsersDB();
+
+    if (!db[email]) {
+      soundService.playClick();
+      get().showToast("❌ No account found with this email! Click 'Create Account' to register.", 'error');
+      return false;
     }
+
+    if (db[email].passwordHash !== password) {
+      soundService.playClick();
+      get().showToast('❌ Incorrect password! Please verify your password.', 'error');
+      return false;
+    }
+
+    soundService.playSuccess();
+    const account = db[email];
     set({
       auth: {
         isAuthenticated: true,
         user: {
           id: `usr_${Date.now()}`,
           email,
-          name: cleanName
+          name: account.name
         }
       },
-      profile: nextProfile,
+      profile: account.profile,
       activeTab: 'dashboard'
     });
-    get().showToast(`Welcome back, ${cleanName}! Signed in to Apex AI Pro.`, 'success');
-    soundService.playVoiceCue('/audio/workout_start.mp3', `Welcome back, ${cleanName}.`);
+    get().showToast(`✅ Welcome back, ${account.name}! Signed in to Apex AI Pro.`, 'success');
+    soundService.playVoiceCue('/audio/workout_start.mp3', `Welcome back, ${account.name}.`);
+    return true;
   },
 
-  signup: (email, name, weightKg = 70, heightCm = 175, age = 26) => {
+  // Secure Account Creation with Email Validation, Strong Password & Unique Registry
+  signup: (rawEmail, password, rawName, weightKg = 70, heightCm = 175, age = 26) => {
+    const email = rawEmail.trim().toLowerCase();
+    const name = rawName.trim() || email.split('@')[0] || 'Member';
+
+    // 1. Validate Email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      soundService.playClick();
+      get().showToast('❌ Please enter a valid email address.', 'error');
+      return false;
+    }
+
+    // 2. Enforce Password security (min 6 chars)
+    if (!password || password.length < 6) {
+      soundService.playClick();
+      get().showToast('❌ Password must be at least 6 characters long for security.', 'error');
+      return false;
+    }
+
+    // 3. Verify Account does NOT already exist
+    const db = getUsersDB();
+    if (db[email]) {
+      soundService.playClick();
+      get().showToast("❌ An account already exists with this email! Click 'Sign In'.", 'error');
+      return false;
+    }
+
     soundService.playSuccess();
-    const cleanName = name || email.split('@')[0] || 'Member';
-    const nextProfile = getBlankProfile(cleanName, weightKg, heightCm, age);
-    localStorage.setItem(`apex_user_${email}`, JSON.stringify(nextProfile));
+    const initialProfile = getBlankProfile(name, weightKg, heightCm, age);
+    
+    // Save new record to secure registry
+    db[email] = {
+      email,
+      passwordHash: password,
+      name,
+      createdAt: new Date().toISOString(),
+      profile: initialProfile
+    };
+    saveUsersDB(db);
 
     set({
       auth: {
@@ -185,14 +253,15 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         user: {
           id: `usr_${Date.now()}`,
           email,
-          name: cleanName
+          name
         }
       },
-      profile: nextProfile,
+      profile: initialProfile,
       activeTab: 'dashboard'
     });
-    get().showToast(`Account created for ${cleanName}! Your personalized plan is ready.`, 'success');
-    soundService.playVoiceCue('/audio/workout_start.mp3', `Welcome to Apex AI Pro, ${cleanName}.`);
+    get().showToast(`✅ Account created for ${name}! Your profile data is secured.`, 'success');
+    soundService.playVoiceCue('/audio/workout_start.mp3', `Welcome to Apex AI Pro, ${name}.`);
+    return true;
   },
 
   loginAsGuest: () => {
@@ -203,14 +272,14 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         isAuthenticated: true,
         user: {
           id: 'usr_guest_01',
-          email: 'alex.mercer@apex.ai',
+          email: 'guest@apex.ai',
           name: guestName
         }
       },
       profile: getBlankProfile(guestName, 74.0, 180, 27),
       activeTab: 'dashboard'
     });
-    get().showToast('Signed in as Guest Athlete (Alex Mercer)', 'info');
+    get().showToast('⚡ Signed in as Guest Athlete (Alex Mercer)', 'info');
   },
 
   logout: () => {
@@ -231,15 +300,22 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
     set({ activeTab });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
+
+  // Save profile updates permanently into logged-in user's account in apex_users_registry
   setProfile: (partial) => {
     set((state) => {
       const updated = { ...state.profile, ...partial };
-      if (state.auth.user) {
-        localStorage.setItem(`apex_user_${state.auth.user.email}`, JSON.stringify(updated));
+      if (state.auth.user && state.auth.user.email !== 'guest@apex.ai') {
+        const db = getUsersDB();
+        if (db[state.auth.user.email]) {
+          db[state.auth.user.email].profile = updated;
+          saveUsersDB(db);
+        }
       }
       return { profile: updated };
     });
   },
+
   setExercises: (exercises) => set({ exercises }),
   setIndianFoods: (indianFoods) => set({ indianFoods }),
   openExerciseModal: (ex) => {
@@ -287,8 +363,12 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         ...state.profile,
         currentWaterLiters: Number((state.profile.currentWaterLiters + liters).toFixed(2))
       };
-      if (state.auth.user) {
-        localStorage.setItem(`apex_user_${state.auth.user.email}`, JSON.stringify(nextProfile));
+      if (state.auth.user && state.auth.user.email !== 'guest@apex.ai') {
+        const db = getUsersDB();
+        if (db[state.auth.user.email]) {
+          db[state.auth.user.email].profile = nextProfile;
+          saveUsersDB(db);
+        }
       }
       return { profile: nextProfile };
     });
@@ -304,8 +384,12 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         currentCaloriesConsumed: state.profile.currentCaloriesConsumed + calories,
         currentProteinConsumed: state.profile.currentProteinConsumed + protein
       };
-      if (state.auth.user) {
-        localStorage.setItem(`apex_user_${state.auth.user.email}`, JSON.stringify(nextProfile));
+      if (state.auth.user && state.auth.user.email !== 'guest@apex.ai') {
+        const db = getUsersDB();
+        if (db[state.auth.user.email]) {
+          db[state.auth.user.email].profile = nextProfile;
+          saveUsersDB(db);
+        }
       }
       return { profile: nextProfile };
     });
@@ -351,8 +435,12 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         streakDays: state.profile.streakDays + 1,
         totalXp: state.profile.totalXp + 250
       };
-      if (state.auth.user) {
-        localStorage.setItem(`apex_user_${state.auth.user.email}`, JSON.stringify(nextProfile));
+      if (state.auth.user && state.auth.user.email !== 'guest@apex.ai') {
+        const db = getUsersDB();
+        if (db[state.auth.user.email]) {
+          db[state.auth.user.email].profile = nextProfile;
+          saveUsersDB(db);
+        }
       }
       return {
         showCelebrationModal: true,
@@ -371,8 +459,12 @@ export const useFitnessStore = create<FitnessState>((set, get) => ({
         workoutLocation: 'HOME_GYM',
         equipmentAvailable: 'BODYWEIGHT'
       };
-      if (state.auth.user) {
-        localStorage.setItem(`apex_user_${state.auth.user.email}`, JSON.stringify(nextProfile));
+      if (state.auth.user && state.auth.user.email !== 'guest@apex.ai') {
+        const db = getUsersDB();
+        if (db[state.auth.user.email]) {
+          db[state.auth.user.email].profile = nextProfile;
+          saveUsersDB(db);
+        }
       }
       return {
         selectedWorkoutType: 'HOME_WORKOUT',

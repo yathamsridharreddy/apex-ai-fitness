@@ -1,5 +1,5 @@
 // APEX AI FITNESS — PRO (Apple-Grade Authentication & Account Creation Screen)
-// Users sign in or register to access their own personalized fitness telemetry (no static predefined data).
+// Secure password verification, valid original email checking, and persistent user accounts.
 
 import React, { useState } from 'react';
 import { useFitnessStore } from '../store/useFitnessStore';
@@ -19,14 +19,10 @@ export const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      alert('Please enter a valid email address.');
-      return;
-    }
     if (authMode === 'LOGIN') {
-      login(email, fullName);
+      login(email, password);
     } else {
-      signup(email, fullName, Number(weightKg), Number(heightCm), Number(age));
+      signup(email, password, fullName, Number(weightKg), Number(heightCm), Number(age));
     }
   };
 
@@ -45,7 +41,7 @@ export const LoginPage: React.FC = () => {
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight text-white">APEX AI PRO</h1>
           <p className="text-xs text-gray-400">
-            Sign in to load your personal AI workout & nutrition telemetry.
+            Secure sign in with password verification & personal data storage.
           </p>
         </div>
 
@@ -116,7 +112,7 @@ export const LoginPage: React.FC = () => {
             <input
               type="password"
               required
-              placeholder="••••••••••••"
+              placeholder="Min 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/15 text-white font-semibold placeholder-gray-500 focus:outline-none focus:border-blue-500"
@@ -173,7 +169,7 @@ export const LoginPage: React.FC = () => {
           <div className="flex-grow border-t border-white/10"></div>
         </div>
 
-        {/* Instant Demo / Guest Button */}
+        {/* Instant Guest Button */}
         <button
           type="button"
           onClick={loginAsGuest}
@@ -185,7 +181,7 @@ export const LoginPage: React.FC = () => {
       </div>
 
       <p className="text-center text-gray-500 text-xs mt-6 max-w-md">
-        Apex AI Pro uses end-to-end encrypted local storage & PostgreSQL telemetry. Your personal data is never shared.
+        Apex AI Pro uses end-to-end encrypted local storage & PostgreSQL telemetry. Only original emails with verified passwords can access saved user data.
       </p>
     </div>
   );
